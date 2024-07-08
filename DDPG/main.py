@@ -2,13 +2,13 @@ import gym
 import numpy as np
 import random
 
-from DDPGAgent import DDPGAgent
+from agent import Agent
 
 environment = gym.make(id='Pendulum-v1')
 STATE_NUM = environment.observation_space.shape[0]
 ACTION_NUM = environment.action_space.shape[0]
 
-agent = DDPGAgent(STATE_NUM, ACTION_NUM)
+agent = Agent(STATE_NUM, ACTION_NUM)
 
 # Hyperparameters
 NUM_EPISODE = 100
@@ -31,13 +31,13 @@ for episode_i in range(NUM_EPISODE):
         if random_sample <= epsilon:
             action = np.random.uniform(low=-2, high=2, size=ACTION_NUM)
         else:
-            action = agent.getAction(state)
+            action = agent.get_action(state)
 
         # perform the action
         next_state, reward, terminated, truncated, info = environment.step(action)
 
         # store experience into replayBuffer
-        agent.replayBuffer.addExperience(state, action, reward, next_state, terminated)
+        agent.ReplayBuffer.add_experience(state, action, reward, next_state, terminated)
 
         state = next_state
         episode_reward += reward
@@ -48,3 +48,5 @@ for episode_i in range(NUM_EPISODE):
 
     reward_buffer[episode_i] = episode_reward
     print(f"Episode: {episode_i+1}, Reward: {round(episode_reward, 3)}")
+
+environment.close()
