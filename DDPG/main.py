@@ -1,6 +1,9 @@
+import os.path
+import time
 import gym
 import numpy as np
 import random
+import torch
 
 from agent import Agent
 
@@ -10,7 +13,7 @@ ACTION_NUM = environment.action_space.shape[0]
 
 agent = Agent(STATE_NUM, ACTION_NUM)
 
-# Hyperparameters
+# Hyperparametersw
 NUM_EPISODE = 100
 NUM_STEP = 200
 EPSILON_START = 1
@@ -37,7 +40,7 @@ for episode_i in range(NUM_EPISODE):
         next_state, reward, terminated, truncated, info = environment.step(action)
 
         # store experience into replayBuffer
-        agent.ReplayBuffer.add_experience(state, action, reward, next_state, terminated)
+        agent.replay_buffer.add_experience(state, action, reward, next_state, terminated)
 
         state = next_state
         episode_reward += reward
@@ -48,5 +51,12 @@ for episode_i in range(NUM_EPISODE):
 
     reward_buffer[episode_i] = episode_reward
     print(f"Episode: {episode_i+1}, Reward: {round(episode_reward, 3)}")
+
+# save model
+current_path = os.path.dirname(os.path.realpath(__file__))
+model_path = current_path + '/models/'
+timestamp = time.strftime("%Y%m%d%H%M%S")
+torch.save(agent.actor.state_dict(), model_path + f"ddpg_actor_{timestamp}.pth")
+torch.save(agent.critic.state_dict(), model_path + f"ddpg_critic_{timestamp}.pth")
 
 environment.close()

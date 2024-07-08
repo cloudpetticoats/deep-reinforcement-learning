@@ -83,12 +83,15 @@ class Agent:
         return action.detach().cpu().numpy()[0]
 
     def update(self):
+        if len(self.replay_buffer) < BATCH_SIZE:
+            return
+
         states, actions, rewards, next_states, terminateds = self.replay_buffer.sample(BATCH_SIZE)
         states = torch.FloatTensor(states)
-        actions = torch.FloatTensor(actions)
-        rewards = torch.FloatTensor(rewards)
+        actions = torch.FloatTensor(np.vstack(actions))
+        rewards = torch.FloatTensor(rewards).unsqueeze(1)
         next_states = torch.FloatTensor(next_states)
-        terminateds = torch.FloatTensor(terminateds)
+        terminateds = torch.FloatTensor(terminateds).unsqueeze(1)
 
         # update critic network
         next_action = self.target_actor(next_states)
