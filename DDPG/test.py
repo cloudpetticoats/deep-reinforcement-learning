@@ -36,7 +36,7 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
 
     current_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = current_path + '/models/ddpg_actor_20240708184054.pth'
+    model_path = current_path + '/models/ddpg_actor_20240709125035.pth'
 
     environment = gym.make(id='Pendulum-v1', render_mode="rgb_array")
     state_num = environment.observation_space.shape[0]

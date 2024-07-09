@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 from collections import deque
 import torch.optim as optim
+import matplotlib.pyplot as plt
 
 
 # Hyperparameters
@@ -11,7 +12,7 @@ LR_ACTOR = 1e-4
 LR_CRITIC = 1e-3
 GAMMA = 0.99
 MEMORY_SIZE = 100000
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 TAU = 5e-3
 
 
@@ -56,7 +57,6 @@ class ReplayBuffer:
 
     def sample(self, batch_size):
         state, action, reward, next_state, terminated = zip(*random.sample(self.buffer, batch_size))
-        # TODO ? state到底是什么样子的需要np.concatenate
         return np.concatenate(state), action, reward, np.concatenate(next_state), terminated
 
     def __len__(self):
@@ -76,6 +76,9 @@ class Agent:
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=LR_CRITIC)
 
         self.replay_buffer = ReplayBuffer(BATCH_SIZE)
+
+        self.loss_actor = []
+        self.loss_critic = []
 
     def get_action(self, state):
         state = torch.FloatTensor(state).unsqueeze(0)
@@ -99,12 +102,18 @@ class Agent:
         target_Q = rewards + GAMMA * target_Q * (1 - terminateds)
         Q = self.critic(states, actions)
         critic_loss = nn.MSELoss()(Q, target_Q)
+
+        self.loss_critic.append(critic_loss.detach().numpy())
+
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
         self.critic_optimizer.step()
 
         # update actor network
         actor_loss = -self.critic(states, self.actor(states)).mean()
+
+        self.loss_actor.append(actor_loss.detach().numpy())
+
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
         self.actor_optimizer.step()
@@ -116,3 +125,16 @@ class Agent:
         # update target actor network
         for target_param, param in zip(self.target_actor.parameters(), self.actor.parameters()):
             target_param.data.copy_(TAU * param.data + (1 - TAU) * target_param.data)
+
+    def plot(self):
+        plt.plot(range(len(self.loss_actor)), self.loss_actor, color='b')
+        plt.title('loss actor network')
+        plt.xlabel('step')
+        plt.ylabel('loss')
+        plt.show()
+
+        plt.plot(range(len(self.loss_critic)), self.loss_critic, color='b')
+        plt.title('loss critic network')
+        plt.xlabel('step')
+        plt.ylabel('loss')
+        plt.show()

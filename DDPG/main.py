@@ -4,6 +4,7 @@ import gym
 import numpy as np
 import random
 import torch
+import matplotlib.pyplot as plt
 
 from agent import Agent
 
@@ -13,7 +14,7 @@ ACTION_NUM = environment.action_space.shape[0]
 
 agent = Agent(STATE_NUM, ACTION_NUM)
 
-# Hyperparametersw
+# Hyperparameters
 NUM_EPISODE = 100
 NUM_STEP = 200
 EPSILON_START = 1
@@ -22,6 +23,7 @@ EPSILON_DECAY = NUM_EPISODE*NUM_STEP/2
 
 # process data
 reward_buffer = np.empty(shape=NUM_EPISODE)
+reward_list = []
 
 for episode_i in range(NUM_EPISODE):
     state, info = environment.reset()
@@ -50,7 +52,15 @@ for episode_i in range(NUM_EPISODE):
             break
 
     reward_buffer[episode_i] = episode_reward
+    reward_list.append(episode_reward)
     print(f"Episode: {episode_i+1}, Reward: {round(episode_reward, 3)}")
+
+agent.plot()
+plt.plot(range(len(reward_list)), reward_list, color='b')
+plt.title('reward')
+plt.xlabel('episode')
+plt.ylabel('reward')
+plt.show()
 
 # save model
 current_path = os.path.dirname(os.path.realpath(__file__))
