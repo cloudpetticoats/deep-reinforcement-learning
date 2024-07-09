@@ -102,18 +102,14 @@ class Agent:
         target_Q = rewards + GAMMA * target_Q * (1 - terminateds)
         Q = self.critic(states, actions)
         critic_loss = nn.MSELoss()(Q, target_Q)
-
         self.loss_critic.append(critic_loss.detach().numpy())
-
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
         self.critic_optimizer.step()
 
         # update actor network
         actor_loss = -self.critic(states, self.actor(states)).mean()
-
         self.loss_actor.append(actor_loss.detach().numpy())
-
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
         self.actor_optimizer.step()
