@@ -23,5 +23,17 @@ The `Advantage Function` is the critic of Actor-Critic.
 
 # _4.The algorithm included in this project_
 * DDPG
-* PPO
-![baseline.png](images/ppo.png)
+* PPO 
+  + ![ppo.png](images/ppo.png)
+* DQN
+  + value-based方法使用Temporal-difference(TD)更新network.(`V(St)`的含义是从当前状态St开始到这个episode结束所能获得奖励的期望)
+   ![td.png](images/td.png)
+  + Q:和V不一样，输入的是a和s，代表的是在状态s执行动作a之后可以获得的未来奖励值的期望。V只输入s。
+   ![q.png](images/q.png)
+  + 使用target network在更新网络的时候只更新原始网络，固定target，在训练一定轮数后再把target网络的参数更新。
+   ![target.png](images/target.png)
+  + Exploration:agent需要有一定的探索性，如果一直根据`Q Function`的最大值去选择action就会导致有一些action一直不能被选择到，为了训练每个state下更多的action，需要增加一些agent的探索性。主要有下图所示的两种解决方案。
+   ![exploration.png](images/exploration.png)
+  + replay buffer
+  + DQN-Algorithm
+   ![dqn.png](images/dqn.png)
