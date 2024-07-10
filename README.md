@@ -2,9 +2,13 @@
 Code implementation of deep reinforcement learning
 
 # _2.Reference_
-* Excellent Weblog：https://zhuanlan.zhihu.com/p/342919579
-* Excellent Web：https://www.deeprlhub.com/
-* Excellent Course：https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1
+* Excellent Weblog：
+    + https://zhuanlan.zhihu.com/p/342919579
+* Excellent Web：
+    + 深度强化学习实验室：https://www.deeprlhub.com/
+    + 蘑菇书：https://datawhalechina.github.io/easy-rl/#/
+* Excellent Course：
+    + 李宏毅深度强化学习公开课：https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1
 
 # _3.Tips_
 * _Add a baseline:_ Make the total reward when updating an actor have a positive or negative number. And not always positive.(因为随机sample样本训练，可能抽到不好的action去训练，并且这个action的reward又是正数，导致这个action概率增大~)
