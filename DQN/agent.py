@@ -1,4 +1,4 @@
-from collections import deque, namedtuple
+from collections import deque
 import random
 import torch.nn as nn
 import torch
@@ -7,9 +7,9 @@ import torch.optim as optim
 # Hyperparameters
 LR = 1e-4
 MEMORY_SIZE = 10000
-
-# 定义经验的元组格式
-experience = namedtuple('Experience', ('state', 'action', 'next_state', 'reward'))
+BATCH_SIZE = 128
+GAMMA = 0.99
+UPDATE_TARGET = 100
 
 
 class Q_net(nn.Module):
@@ -32,8 +32,8 @@ class Memory:
     def __len__(self):
         return len(self.memory)
 
-    def push(self, *args):
-        self.memory.append(experience(*args))
+    def push(self, state, action, next_state, reward, end):
+        self.memory.append((torch.tensor(state), action, torch.tensor(next_state), reward, end))
 
     def sample(self, batch_size):
         return random.sample(self.memory, batch_size)
@@ -49,7 +49,41 @@ class Agent:
 
         self.memory = Memory(MEMORY_SIZE)
 
+        self.update_count = 0
+
     def get_action(self, state):
         # 禁用自动梯度计算
         with torch.no_grad():
-            return self.q_net(state).max(1).indices.view(1, 1)
+            return self.q_net(torch.tensor(state)).max(0).indices.item()
+
+    def update(self):
+        if len(self.memory) < BATCH_SIZE:
+            return
+
+        # state :[ 0.00953062  0.04529195 -0.00640777 -0.035508  ]  action : 0
+        states, actions, next_states, rewards, ends = zip(*self.memory.sample(BATCH_SIZE))
+        states = torch.stack(states)
+        actions = torch.tensor(actions).unsqueeze(1)
+        rewards = torch.tensor(rewards).unsqueeze(1)
+        next_states = torch.stack(next_states)
+        ends = torch.FloatTensor(ends).unsqueeze(1)
+
+        # q_net 的Q值（动作状态函数）
+        q = self.q_net(states).gather(1, actions)
+
+        # print(q)
+
+        # target_q_net 的target_q
+        with torch.no_grad():
+            max_target_q_net = self.target_q_net(next_states).max(1).values.unsqueeze(1)
+            target_q = rewards + (1 - ends) * GAMMA * max_target_q_net
+
+        # print(target_q)
+
+        loss = nn.MSELoss()(q, target_q)
+        self.q_net_optimizer.zero_grad()
+        loss.backward()
+        self.q_net_optimizer.step()
+
+        if self.update_count % UPDATE_TARGET == 0:
+            self.target_q_net.load_state_dict(self.q_net.state_dict())
