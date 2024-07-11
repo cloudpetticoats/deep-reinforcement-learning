@@ -68,17 +68,13 @@ class Agent:
         next_states = torch.stack(next_states)
         ends = torch.FloatTensor(ends).unsqueeze(1)
 
-        # q_net 的Q值（动作状态函数）
+        # q_net的Q值（动作状态函数）
         q = self.q_net(states).gather(1, actions)
 
-        # print(q)
-
-        # target_q_net 的target_q
+        # target_q of target_q_net
         with torch.no_grad():
             max_target_q_net = self.target_q_net(next_states).max(1).values.unsqueeze(1)
             target_q = rewards + (1 - ends) * GAMMA * max_target_q_net
-
-        # print(target_q)
 
         loss = nn.MSELoss()(q, target_q)
         self.q_net_optimizer.zero_grad()
