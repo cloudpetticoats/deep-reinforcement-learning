@@ -1,8 +1,11 @@
+import os.path
 import random
 
 import gym
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
+import time
 
 from agent import Agent
 
@@ -50,6 +53,10 @@ if __name__ == '__main__':
         print(f"Episode: {episode_i+1}, Reward: {round(episode_reward, 3)}")
         reward_list.append(episode_reward)
 
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    model_path = current_path + '/models/'
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    torch.save(agent.q_net.state_dict(), model_path + f"dqn_q_net_{timestamp}.pth")
     env.close()
 
     plt.plot(range(len(reward_list)), reward_list, color='b')
