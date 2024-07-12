@@ -10,22 +10,18 @@ Code implementation and note of deep reinforcement learning.
 * Excellent Course：
     + [李宏毅深度强化学习公开课YouTube](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
 
-# _3.Tips_
-* _Add a baseline:_ Make the total reward when updating an actor have a positive or negative number. And not always positive.(因为随机sample样本训练，可能抽到不好的action去训练，并且这个action的reward又是正数，导致这个action概率增大~)
-![baseline.png](images/baseline.png)
-* _Assign Suitable Credit(就是在baseline的基础上再加一个衰减因子gamma作为后面梯度的权重系数):_ A `gamma` has been added, which means that the farther away from the current state of the action is made, the smaller the weight of the reward to the current one.
-`b` is generated through a network and is somewhat complex.
-The `Advantage Function` is the critic of Actor-Critic.
-![credit.png](images/credit.png)
-* _On-policy / Off-policy:_ agent自己在environment中交互并更新policy / agent使用其它agent交互出来的经验更新自己的policy.
-* _Important Sampling:_ (是一个普遍的方法，不是RL独有的)核心思想就是我们无法求出p分布下f(x)的期望，但可以通过求q分布下f(x)的期望去代替。但需要大量的sample，过少的sample会出现二者不相等的情况.
-![sampling.png](images/sampling.png)
-
-# _4.The algorithm included in this project_
-* DDPG
-* PPO 
+# _3.The algorithm included in this project(Notes)_
+* **DDPG**
+  + Add a baseline: Make the total reward when updating an actor have a positive or negative number. And not always positive.(因为随机sample样本训练，可能抽到不好的action去训练，并且这个action的reward又是正数，导致这个action概率增大~)
+   ![baseline.png](images/baseline.png)
+  + Assign Suitable Credit(就是在baseline的基础上再加一个衰减因子gamma作为后面梯度的权重系数): A `gamma` has been added, which means that the farther away from the current state of the action is made, the smaller the weight of the reward to the current one. `b` is generated through a network and is somewhat complex. The `Advantage Function` is the critic of Actor-Critic.
+   ![credit.png](images/credit.png)
+  + On-policy / Off-policy: agent自己在environment中交互并更新policy / agent使用其它agent交互出来的经验更新自己的policy.
+  + Important Sampling: (是一个普遍的方法，不是RL独有的)核心思想就是我们无法求出p分布下f(x)的期望，但可以通过求q分布下f(x)的期望去代替。但需要大量的sample，过少的sample会出现二者不相等的情况.
+   ![sampling.png](images/sampling.png)
+* **PPO**
   + ![ppo.png](images/ppo.png)
-* DQN
+* **DQN**
   + value-based方法使用Temporal-difference(TD)更新network.(`V(St)`的含义是从当前状态St开始到这个episode结束所能获得奖励的期望)
    ![td.png](images/td.png)
   + Q:和V不一样，输入的是a和s，代表的是在状态s执行动作a之后可以获得的未来奖励值的期望。V只输入s。
@@ -50,12 +46,12 @@ The `Advantage Function` is the critic of Actor-Critic.
   + DQN处理连续的action空间也是可以的，有三种解决办法。第一种：大数定律穷举多个样本，取最大q值的action；第二种：使用梯度上升选取action优化q最大，太费时间；第三种：定义一个非常好求最值的q函数，在这个函数下a=μ是就是最值所在点。
    ![continuous-1.png](images/continuous-1.png)
    ![continuous-2.png](images/continuous-2.png)
-* Double-DQN
+* **Double-DQN**
   + 在DQN的基础上只有一个改动：DQN是target_q_net选取下一状态的最大值动作，然后算出它的Q值（这种思想会出现**高估**问题）。Double-DQN是使用q_net选择最大值的动作，然后使用target_q_net计算Q值。
-* Dueling-DQN
+* **Dueling-DQN**
   + 在DQN的基础上值改变的网络的结构，输出位置是由两个结果加起来的。并且需要给输出矢量那个部分加上个约束，例如令矢量里面的元素之和始终等于0的normalize(下图上半部分是DQN网络架构，下半部分是Dueling-DQN网络架构)
    ![dueling-dqn.png](images/dueling-dqn.png)
   + 具体细节
    ![dueling-dqn-1.png](images/dueling-dqn-1.png)
-* Dueling Double Deep Q Network(D3QN)
+* **Dueling Double Deep Q Network(D3QN)**
   + 就是把Double DQN和Dueling DQN结合起来。
