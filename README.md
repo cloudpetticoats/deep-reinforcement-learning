@@ -4,6 +4,7 @@ Code implementation and note of deep reinforcement learning.
 # _2.Reference_
 * Excellent Weblog：
     + [如何选择深度强化学习算法？MuZero/SAC/PPO/TD3/DDPG/DQN/等](https://zhuanlan.zhihu.com/p/342919579)
+    + [深度强化学习调参技巧：以D3QN、TD3、PPO、SAC算法为例](https://zhuanlan.zhihu.com/p/345353294)
 * Excellent Web：
     + [深度强化学习实验室](https://www.deeprlhub.com/)
     + [蘑菇书](https://datawhalechina.github.io/easy-rl/#/)
