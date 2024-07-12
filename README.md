@@ -1,14 +1,14 @@
 # _1.Introduction_
-Code implementation of deep reinforcement learning
+Code implementation and note of deep reinforcement learning.
 
 # _2.Reference_
 * Excellent Weblog：
-    + https://zhuanlan.zhihu.com/p/342919579
+    + [如何选择深度强化学习算法？MuZero/SAC/PPO/TD3/DDPG/DQN/等](https://zhuanlan.zhihu.com/p/342919579)
 * Excellent Web：
-    + 深度强化学习实验室：https://www.deeprlhub.com/
-    + 蘑菇书：https://datawhalechina.github.io/easy-rl/#/
+    + [深度强化学习实验室](https://www.deeprlhub.com/)
+    + [蘑菇书](https://datawhalechina.github.io/easy-rl/#/)
 * Excellent Course：
-    + 李宏毅深度强化学习公开课：https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1
+    + [李宏毅深度强化学习公开课YouTube](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
 
 # _3.Tips_
 * _Add a baseline:_ Make the total reward when updating an actor have a positive or negative number. And not always positive.(因为随机sample样本训练，可能抽到不好的action去训练，并且这个action的reward又是正数，导致这个action概率增大~)
@@ -37,6 +37,19 @@ The `Advantage Function` is the critic of Actor-Critic.
   + replay buffer
   + DQN-Algorithm
    ![dqn.png](images/dqn.png)
+  + prioritized replay: 把q和q_target之间差距更大的设置更高的优先级去sample.(注意不是奖励越大的设置更高的优先级，而是TD-error越大的~)
+   ![prioritized-replay.png](images/prioritized-replay.png)
+  + multi-step:原始的思想是经验只存一步的reward，multi-step的思想是存多步的reward，是一种MC和TD结合的思想。
+   ![multi-step.png](images/multi-step.png)
+  + noisy net:
+   ![noisy-net.png](images/noisy-net.png)
+  + distributional q-function
+  + rainbow:把上述所有方法组合到一起(下图第一张为在DQN基础上单独加上每一种改进的效果，第二张图为在rainbow的基础上单独剪掉某一种方法的效果)。
+   ![rainbow-1.png](images/rainbow-1.png)
+   ![rainbow-2.png](images/rainbow-2.png)
+  + DQN处理连续的action空间也是可以的，有三种解决办法。第一种：大数定律穷举多个样本，取最大q值的action；第二种：使用梯度上升选取action优化q最大，太费时间；第三种：定义一个非常好求最值的q函数，在这个函数下a=μ是就是最值所在点。
+   ![continuous-1.png](images/continuous-1.png)
+   ![continuous-2.png](images/continuous-2.png)
 * Double-DQN
   + 在DQN的基础上只有一个改动：DQN是target_q_net选取下一状态的最大值动作，然后算出它的Q值（这种思想会出现**高估**问题）。Double-DQN是使用q_net选择最大值的动作，然后使用target_q_net计算Q值。
 * Dueling-DQN
@@ -44,3 +57,5 @@ The `Advantage Function` is the critic of Actor-Critic.
    ![dueling-dqn.png](images/dueling-dqn.png)
   + 具体细节
    ![dueling-dqn-1.png](images/dueling-dqn-1.png)
+* Dueling Double Deep Q Network(D3QN)
+  + 就是把Double DQN和Dueling DQN结合起来。
