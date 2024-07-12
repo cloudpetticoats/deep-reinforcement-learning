@@ -9,7 +9,7 @@ import time
 
 from agent import Agent
 
-MAX_EPISODE = 400
+MAX_EPISODE = 300
 MAX_STEP = 100
 EPSILON_START = 1
 EPSILON_END = 0.02

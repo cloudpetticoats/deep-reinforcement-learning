@@ -81,5 +81,7 @@ class Agent:
         loss.backward()
         self.q_net_optimizer.step()
 
+        self.update_count += 1
+
         if self.update_count % UPDATE_TARGET == 0:
             self.target_q_net.load_state_dict(self.q_net.state_dict())

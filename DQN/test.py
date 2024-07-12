@@ -34,7 +34,7 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
 
     current_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = current_path + '/models/dqn_q_net_20240711195053.pth'
+    model_path = current_path + '/models/dqn_q_net_20240712092431.pth'
 
     environment = gym.make('CartPole-v1', render_mode='rgb_array')
     state_dim = environment.observation_space.shape[0]
