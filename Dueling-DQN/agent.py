@@ -13,6 +13,9 @@ UPDATE_TARGET = 100
 
 
 class Q_net(nn.Module):
+    """
+    Dueling-DQN对于 DQN，只改变了这里的网络结构
+    """
     def __init__(self, input_dim, output_dim):
         super(Q_net, self).__init__()
         self.f1 = nn.Linear(input_dim, 128)
