@@ -39,3 +39,8 @@ The `Advantage Function` is the critic of Actor-Critic.
    ![dqn.png](images/dqn.png)
 * Double-DQN
   + 在DQN的基础上只有一个改动：DQN是target_q_net选取下一状态的最大值动作，然后算出它的Q值（这种思想会出现**高估**问题）。Double-DQN是使用q_net选择最大值的动作，然后使用target_q_net计算Q值。
+* Dueling-DQN
+  + 在DQN的基础上值改变的网络的结构，输出位置是由两个结果加起来的。并且需要给输出矢量那个部分加上个约束，例如令矢量里面的元素之和始终等于0的normalize(下图上半部分是DQN网络架构，下半部分是Dueling-DQN网络架构)
+   ![dueling-dqn.png](images/dueling-dqn.png)
+  + 具体细节
+   ![dueling-dqn-1.png](images/dueling-dqn-1.png)
