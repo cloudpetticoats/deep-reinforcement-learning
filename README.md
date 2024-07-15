@@ -56,3 +56,6 @@ Code implementation and note of deep reinforcement learning.
    ![dueling-dqn-1.png](images/dueling-dqn-1.png)
 * **Dueling Double Deep Q Network(D3QN)**
   + 就是把Double DQN和Dueling DQN结合起来。
+# _4.Sparse Reward_
+   ![curiosity.png](images/curiosity.png)
+   ![sparse-reward.png](images/sparse-reward.png)
