@@ -8,6 +8,7 @@ Code implementation and note of deep reinforcement learning.
 * Excellent Web：
     + [深度强化学习实验室](https://www.deeprlhub.com/)
     + [蘑菇书](https://datawhalechina.github.io/easy-rl/#/)
+    + [hujian@gitbook](https://hujian.gitbook.io/deep-reinforcement-learning)
 * Excellent Course：
     + [李宏毅深度强化学习公开课YouTube](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
 
