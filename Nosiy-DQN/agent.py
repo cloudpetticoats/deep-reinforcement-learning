@@ -13,16 +13,47 @@ UPDATE_TARGET = 100
 
 
 class Q_net(nn.Module):
-    def __init__(self, input_dim, output_dim):
+    def __init__(self, input_dim, output_dim, mode='Train'):
         super(Q_net, self).__init__()
-        self.f1 = nn.Linear(input_dim, 128)
-        self.f2 = nn.Linear(128, 128)
-        self.f3 = nn.Linear(128, output_dim)
+        self.f1 = NoisyLinear(input_dim, 128, mode)
+        self.f2 = NoisyLinear(128, 128, mode)
+        self.f3 = NoisyLinear(128, 128, mode)
+        self.f4 = NoisyLinear(128, output_dim, mode)
 
     def forward(self, x):
         x = torch.relu(self.f1(x))
         x = torch.relu(self.f2(x))
-        return self.f3(x)
+        x = torch.relu(self.f3(x))
+        return self.f4(x)
+
+
+class NoisyLinear(nn.Module):
+    def __init__(self, input_dim, output_dim, mode):
+        super(NoisyLinear, self).__init__()
+        self.weight_mu = nn.Parameter(torch.FloatTensor(output_dim, input_dim))
+        self.weight_sigma = nn.Parameter(torch.FloatTensor(output_dim, input_dim))
+        self.bias_mu = nn.Parameter(torch.FloatTensor(output_dim))
+        self.bias_sigma = nn.Parameter(torch.FloatTensor(output_dim))
+
+        self.register_buffer('weight_epsilon', torch.FloatTensor(output_dim, input_dim))
+        self.register_buffer('bias_epsilon', torch.FloatTensor(output_dim))
+
+        self.mode = mode
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+
+        self.reset_epsilon()
+
+    def forward(self, x):
+        if self.mode == 'Train':
+            return nn.functional.linear(x, self.weight_mu + self.weight_sigma.mul(self.weight_epsilon),
+                                        self.bias_mu + self.bias_sigma.mul(self.bias_epsilon))
+        else:
+            return nn.functional.linear(x, self.weight_mu, self.bias_mu)
+
+    def reset_epsilon(self):
+        self.weight_epsilon = torch.rand(self.output_dim, self.input_dim)
+        self.bias_epsilon = torch.rand(self.output_dim)
 
 
 class Memory:
