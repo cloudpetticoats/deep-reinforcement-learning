@@ -4,19 +4,22 @@ import torch.nn.functional as F
 from collections import deque
 import torch.optim as optim
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class PolicyNet(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(PolicyNet, self).__init__()
-        self.f1 = nn.Linear(input_dim, 32)
-        self.f2 = nn.Linear(32, 16)
-        self.mu = nn.Linear(16, output_dim)
-        self.std = nn.Linear(16, output_dim)
+        self.f1 = nn.Linear(input_dim, 64)
+        self.f2 = nn.Linear(64, 64)
+        self.f3 = nn.Linear(64, 64)
+        self.mu = nn.Linear(64, output_dim)
+        self.std = nn.Linear(64, output_dim)
 
     def forward(self, x):
         x = F.relu(self.f1(x))
         x = F.relu(self.f2(x))
+        x = F.relu(self.f3(x))
         return F.tanh(self.mu(x)) * 2, F.softplus(self.std(x))
 
 
@@ -26,14 +29,16 @@ class ValueNet(nn.Module):
     """
     def __init__(self, input_dim):
         super(ValueNet, self).__init__()
-        self.f1 = nn.Linear(input_dim, 32)
-        self.f2 = nn.Linear(32, 16)
-        self.f3 = nn.Linear(16, 1)
+        self.f1 = nn.Linear(input_dim, 64)
+        self.f2 = nn.Linear(64, 64)
+        self.f3 = nn.Linear(64, 64)
+        self.f4 = nn.Linear(64, 1)
 
     def forward(self, x):
         x = F.relu(self.f1(x))
         x = F.relu(self.f2(x))
-        return self.f3(x)
+        x = F.relu(self.f3(x))
+        return self.f4(x)
 
 
 class TrajectoryMemory:
@@ -62,6 +67,9 @@ class Agent:
         self.lamda = lamda
         self.epoch = epoch
         self.eps = eps
+
+        self.actor_loss = []
+        self.critic_loss = []
 
     def get_action(self, state):
         with torch.no_grad():
@@ -108,11 +116,14 @@ class Agent:
             ratio_distribution = torch.exp(log_distribution - old_log_distribution)
 
             term1 = ratio_distribution * advantages
-            term2 = torch.clip(ratio_distribution, 1 - self.eps, 1 + self.eps)
+            term2 = torch.clamp(ratio_distribution, 1 - self.eps, 1 + self.eps) * advantages
             new_v_val = self.critic(states)
 
             actor_loss = torch.mean(-torch.min(term1, term2))
             critic_loss = torch.mean(F.mse_loss(new_v_val, v_target_val.detach()))
+
+            self.actor_loss.append(actor_loss.item())
+            self.critic_loss.append(critic_loss.item())
 
             self.actor_optimizer.zero_grad()
             self.critic_optimizer.zero_grad()
@@ -121,3 +132,8 @@ class Agent:
             self.actor_optimizer.step()
             self.critic_optimizer.step()
 
+    def plot(self, data, x_label):
+        plt.plot(range(len(data)), data, color='r')
+        plt.xlabel(x_label)
+        plt.ylabel('loss')
+        plt.show()
