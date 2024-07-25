@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 from agent import Agent
 
 # Hyperparameters
-MAX_EPISODE = 300
+MAX_EPISODE = 500
 MAX_TRAJECTORY_LENGTH = 200
 ACTOR_LR = 1e-3
 CRITIC_LR = 1e-4
-GAMMA = 0.99
-LAMBDA = 0.95
+GAMMA = 0.98
+LAMBDA = 0.9
 EPOCH = 10
-EPS = 0.15
+EPS = 0.2
 
 
 reward_list = []
