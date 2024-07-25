@@ -23,6 +23,7 @@ Code implementation and note of deep reinforcement learning.
    ![sampling.png](images/sampling.png)
 * **PPO**
   + ![ppo.png](images/ppo.png)
+  + 参考的[code](https://github.com/LiSir-HIT/Reinforcement-Learning/blob/main/Model/7.%20PPO_Continuous/RL_brain.py)，不知道对不对，现在我实现的不收敛，以后再解决吧~
 * **DQN**
   + value-based方法使用Temporal-difference(TD)更新network.(`V(St)`的含义是从当前状态St开始到这个episode结束所能获得奖励的期望)
    ![td.png](images/td.png)
