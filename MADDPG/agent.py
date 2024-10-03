@@ -89,7 +89,7 @@ class MADDPG:
         obs = torch.FloatTensor(observation).unsqueeze(0)
         return self.actors[agent_idx](obs).detach().numpy()[0]  # 获取动作并转为numpy
 
-    def update(self):
+    def update(self, target_train_flag):
         if len(self.replay_buffers[0]) < self.batch_size:
             return
 
@@ -119,4 +119,5 @@ class MADDPG:
             actor_loss.backward()
             self.actor_optimizers[idx].step()
 
-            self.update_target_networks()
+            if target_train_flag:
+                self.update_target_networks()
