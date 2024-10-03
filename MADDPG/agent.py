@@ -17,7 +17,7 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.softmax(self.fc3(x))  # 输出动作，通过softmax limited
+        x = F.softmax(self.fc3(x), dim=1)  # 输出动作，通过softmax limited
         return x
 
 
@@ -29,7 +29,8 @@ class Critic(nn.Module):
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
         self.fc3 = nn.Linear(hidden_dim, 1)
 
-    def forward(self, x):
+    def forward(self, o, a):
+        x = torch.cat((o, a), dim=1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)  # 最后一层输出Q值
@@ -68,12 +69,12 @@ class MADDPG:
         self.critic_optimizers = [optim.Adam(self.critics[i].parameters(), lr=lr_critic) for i in range(agent_num)]
 
         # initialize replay buffer for every agent
-        self.replay_buffers = [ReplayBuffer(replay_buffer_capacity)] * agent_num
+        self.replay_buffers = [ReplayBuffer(replay_buffer_capacity) for _ in range(agent_num)]
 
         self.update_target_networks(tau=1.0)
 
-        self.loss_actors = []
-        self.loss_critics = []
+        self.loss_actors = [[] for _ in range(agent_num)]
+        self.loss_critics = [[] for _ in range(agent_num)]
 
     def update_target_networks(self, tau=None):
         # 软更新目标网络
