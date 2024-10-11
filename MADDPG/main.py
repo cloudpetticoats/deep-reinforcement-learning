@@ -8,16 +8,17 @@ from utils import plot
 
 
 # Hyperparameters
-MAX_EPISODES = 300  # 最大训练回合数
+MAX_EPISODES = 1000  # 最大训练回合数
 MAX_STEP = 25       # 每个回合中的最大步数
-BATCH_SIZE = 256       # 训练批大小
-MEMORY_CAPACITY = 4096  # 经验回放缓冲池容量
-TARGET_INTERVAL = 60
-LR_ACTOR = 0.01
-LR_CRITIC = 0.01
+BATCH_SIZE = 128       # 训练批大小
+MEMORY_CAPACITY = 1024  # 经验回放缓冲池容量
+TARGET_INTERVAL = 20
+LR_ACTOR = 0.0001
+LR_CRITIC = 0.0001
 EPSILON_START = 1
 EPSILON_END = 0.02
 EPSILON_DECAY = MAX_EPISODES*MAX_STEP/2
+GAMMA = 0.95
 
 
 if __name__ == '__main__':
@@ -27,13 +28,16 @@ if __name__ == '__main__':
     obs_dim = []  # 每个智能体的观测空间维度
     action_dim = []  # 每个智能体的动作空间维度
     reward_history = []
+    agent_name_list = []
 
     for agent_idx, agent_name in enumerate(env.agents):
         obs_dim.append(env.observation_space(agent_name).shape[0])
         action_dim.append(env.action_space(agent_name).shape[0])
+        agent_name_list.append(agent_name)
 
-    maddpg = MADDPG(actor_input_dims=obs_dim, actor_output_dim=action_dim, critic_input_dim=[a + b for a, b in zip(obs_dim, action_dim)],
-                    agent_num=agent_num, lr_actor=LR_ACTOR, lr_critic=LR_CRITIC, replay_buffer_capacity=MEMORY_CAPACITY, batch_size=BATCH_SIZE)
+    maddpg = MADDPG(actor_input_dims=obs_dim, actor_output_dim=action_dim, critic_input_dim=sum(obs_dim)+sum(action_dim),
+                    agent_num=agent_num, lr_actor=LR_ACTOR, lr_critic=LR_CRITIC, replay_buffer_capacity=MEMORY_CAPACITY,
+                    batch_size=BATCH_SIZE, gamma=GAMMA)
 
     for episode_i in range(MAX_EPISODES):
         observations, infos = env.reset()
@@ -53,8 +57,18 @@ if __name__ == '__main__':
 
             next_observations, rewards, terminations, truncations, infos = env.step(actions)
 
+            combine_observations = []
+            combine_next_observations = []
+            combine_actions = []
+            for name_i in agent_name_list:
+                combine_observations.append(observations[name_i])
+                combine_next_observations.append(next_observations[name_i])
+                combine_actions.append(actions[name_i])
+
             for agent_idx, agent_name in enumerate(env.agents):
-                maddpg.replay_buffers[agent_idx].add(observations[agent_name], actions[agent_name], rewards[agent_name], next_observations[agent_name], terminations[agent_name])
+                maddpg.replay_buffers[agent_idx].add(observations[agent_name], combine_observations, combine_actions,
+                                                     rewards[agent_name], next_observations[agent_name],
+                                                     combine_next_observations, terminations[agent_name])
 
             maddpg.update((episode_i*MAX_STEP+step_i)/TARGET_INTERVAL == 0)
 

@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -41,8 +42,8 @@ class ReplayBuffer:
     def __init__(self, capacity):
         self.memory = deque(maxlen=capacity)
 
-    def add(self, obs, actions, rewards, next_obs, dones):
-        self.memory.append((obs, actions, rewards, next_obs, dones))
+    def add(self, obs, combi_obs, combi_actions, rewards, next_obs, combi_next_obs, dones):
+        self.memory.append((obs, combi_obs, combi_actions, rewards, next_obs, combi_next_obs, dones))
 
     def sample(self, batch_size):
         return random.sample(self.memory, batch_size)
@@ -64,8 +65,8 @@ class MADDPG:
         self.actor_optimizers = [optim.Adam(self.actors[i].parameters(), lr=lr_actor) for i in range(agent_num)]
 
         # 初始化每个智能体的critic网络和target_critic网络
-        self.critics = [Critic(critic_input_dim[i], 64) for i in range(agent_num)]
-        self.target_critics = [Critic(critic_input_dim[i], 64) for i in range(agent_num)]
+        self.critics = [Critic(critic_input_dim, 64) for _ in range(agent_num)]
+        self.target_critics = [Critic(critic_input_dim, 64) for _ in range(agent_num)]
         self.critic_optimizers = [optim.Adam(self.critics[i].parameters(), lr=lr_critic) for i in range(agent_num)]
 
         # initialize replay buffer for every agent
@@ -94,18 +95,27 @@ class MADDPG:
             return
 
         for idx, replay_buffer in enumerate(self.replay_buffers):
-            obs, actions, rewards, next_obs, terminateds = zip(*replay_buffer.sample(self.batch_size))
-            obs = torch.FloatTensor(obs)
-            actions = torch.FloatTensor(actions)
+            obs, combi_obs, combi_actions, rewards, next_obs, combi_next_obs, terminateds = zip(*replay_buffer.sample(self.batch_size))
+            combi_obs_1_dim = [[elem for sublist in item for elem in sublist] for item in combi_obs]
+            combi_obs_1_dim = torch.FloatTensor(combi_obs_1_dim)
+            combi_actions_1_dim = [[elem for sublist in item for elem in sublist] for item in combi_actions]
+            combi_actions_1_dim = torch.FloatTensor(combi_actions_1_dim)
             rewards = torch.FloatTensor(rewards).unsqueeze(1)
-            next_obs = torch.FloatTensor(next_obs)
+            combi_next_obs_1_dim = [[elem for sublist in item for elem in sublist] for item in combi_next_obs]
+            combi_next_obs_1_dim = torch.FloatTensor(combi_next_obs_1_dim)
             terminateds = torch.FloatTensor(terminateds).unsqueeze(1)
 
             # update critic network
-            next_action = self.target_actors[idx](next_obs)
-            target_Q = self.target_critics[idx](next_obs, next_action.detach())
+            combi_next_action = []
+            for i in range(self.agent_num):
+                temp_in = [combi_next_obs[j][i] for j in range(self.batch_size)]
+                temp_in = torch.FloatTensor(np.array(temp_in))
+                next_action_i = self.target_actors[i](temp_in).detach()
+                combi_next_action.append(next_action_i)
+            combi_next_action_1_dim = torch.hstack(combi_next_action)
+            target_Q = self.target_critics[idx](combi_next_obs_1_dim, combi_next_action_1_dim)
             target_Q = rewards + self.gamma * target_Q * (1 - terminateds)
-            Q = self.critics[idx](obs, actions)
+            Q = self.critics[idx](combi_obs_1_dim, combi_actions_1_dim)
             critic_loss = nn.MSELoss()(Q, target_Q)
             self.loss_critics[idx].append(critic_loss.detach().numpy())
             self.critic_optimizers[idx].zero_grad()
@@ -113,7 +123,14 @@ class MADDPG:
             self.critic_optimizers[idx].step()
 
             # update actor network
-            actor_loss = -self.critics[idx](obs, self.actors[idx](obs)).mean()
+            combi_action = []
+            for i in range(self.agent_num):
+                temp_in = [combi_obs[j][i] for j in range(self.batch_size)]
+                temp_in = torch.FloatTensor(np.array(temp_in))
+                action_i = self.actors[i](temp_in)
+                combi_action.append(action_i)
+            combi_action_1_dim = torch.hstack(combi_action)
+            actor_loss = -self.critics[idx](combi_obs_1_dim, combi_action_1_dim).mean()
             self.loss_actors[idx].append(actor_loss.detach().numpy())
             self.actor_optimizers[idx].zero_grad()
             actor_loss.backward()
