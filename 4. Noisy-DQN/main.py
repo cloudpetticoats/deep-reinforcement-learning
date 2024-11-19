@@ -18,6 +18,9 @@ reward_list = []
 
 
 if __name__ == '__main__':
+    """
+    ～～～ 注意：Noisy-DQN 不收敛，目前代码有问题，后续再完善，现在请不要使用～～～
+    """
 
     env = gym.make('CartPole-v1')
     state_dim = env.observation_space.shape[0]
