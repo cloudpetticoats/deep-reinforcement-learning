@@ -1,7 +1,5 @@
 import torch.nn as nn
 import torch
-import numpy as np
-import pygame
 import os.path
 import gym
 
@@ -23,24 +21,11 @@ class Q_net(nn.Module):
         return v_val + (a_val - a_val.mean(dim=1, keepdim=True))
 
 
-def process_frame(frame, width, height):
-    frame = np.transpose(frame, (1, 0, 2))
-    frame = pygame.surfarray.make_surface(frame)
-    return pygame.transform.scale(frame, (width, height))
-
-
 if __name__ == '__main__':
-
-    # init pygame
-    pygame.init()
-    width, height = 600, 600
-    screen = pygame.display.set_mode((width, height))
-    clock = pygame.time.Clock()
-
     current_path = os.path.dirname(os.path.realpath(__file__))
     model_path = current_path + '/models/dqn_q_net_20240712123003.pth'
 
-    environment = gym.make('CartPole-v1', render_mode='rgb_array')
+    environment = gym.make('CartPole-v1', render_mode='human')
     state_dim = environment.observation_space.shape[0]
     action_dim = environment.action_space.n
 
@@ -59,12 +44,6 @@ if __name__ == '__main__':
             state = next_state
             episode_reward += reward
 
-            frame = process_frame(environment.render(), width, height)
-            screen.blit(frame, (0, 0))
-            pygame.display.flip()
-            clock.tick(60)
-
         print(f"Episode: {episode_i + 1}, Reward: {round(episode_reward, 3)}")
 
-    pygame.quit()
     environment.close()
