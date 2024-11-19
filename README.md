@@ -1,5 +1,9 @@
 # _1.Introduction_
-Code implementation and note of deep reinforcement learning.
+This repository is an implementation of common algorithms for **Deep Reinforcement Learning (DRL)**. 
+
+In each directory, run `main.py` to train, save the trained model to the `./models/` directory, and then run `test.py` to perform visualization tests. 
+
+For code questions, please submit an issue or contact via _email_ (my homepage shows).
 
 # _2.Reference_
 * Excellent Weblog：
