@@ -1,10 +1,7 @@
 import os.path
-
-import numpy as np
 import torch
 import torch.nn as nn
 import gym
-import pygame
 
 
 class Actor(nn.Module):
@@ -21,24 +18,11 @@ class Actor(nn.Module):
         return x
 
 
-def process_frame(frame, width, height):
-    frame = np.transpose(frame, (1, 0, 2))
-    frame = pygame.surfarray.make_surface(frame)
-    return pygame.transform.scale(frame, (width, height))
-
-
 if __name__ == '__main__':
-
-    # init pygame
-    pygame.init()
-    width, height = 600, 600
-    screen = pygame.display.set_mode((width, height))
-    clock = pygame.time.Clock()
-
     current_path = os.path.dirname(os.path.realpath(__file__))
     model_path = current_path + '/models/ddpg_actor_20240709125035.pth'
 
-    environment = gym.make(id='Pendulum-v1', render_mode="rgb_array")
+    environment = gym.make(id='Pendulum-v1', render_mode="human")
     state_num = environment.observation_space.shape[0]
     action_num = environment.action_space.shape[0]
     actor = Actor(state_num, action_num)
@@ -54,12 +38,6 @@ if __name__ == '__main__':
             state = next_state
             episode_reward += reward
 
-            frame = process_frame(environment.render(), width, height)
-            screen.blit(frame, (0, 0))
-            pygame.display.flip()
-            clock.tick(60)
-
         print(f"Episode: {episode_i + 1}, Reward: {round(episode_reward, 3)}")
 
-    pygame.quit()
     environment.close()
