@@ -1,15 +1,17 @@
 import gym
 import matplotlib.pyplot as plt
+import torch
+import os
 
 from agent import Agent
 
 # Hyperparameters
-MAX_EPISODE = 400
+MAX_EPISODE = 1000
 MAX_TRAJECTORY_LENGTH = 200
 ACTOR_LR = 1e-4
-CRITIC_LR = 5e-3
-GAMMA = 0.99
-LAMBDA = 0.9
+CRITIC_LR = 1e-4
+GAMMA = 0.98
+LAMBDA = 0.95
 EPOCH = 10
 EPS = 0.2
 
@@ -18,9 +20,9 @@ reward_list = []
 
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v1')  # render_mode="human"
-    n_states = env.observation_space.shape[0]  # 3
-    n_actions = 1  # 1
+    env = gym.make('CartPole-v0')  # render_mode="human"
+    n_states = env.observation_space.shape[0]  # 4
+    n_actions = env.action_space.n # 2
 
     agent = Agent(n_states, n_actions, MAX_TRAJECTORY_LENGTH, ACTOR_LR, CRITIC_LR, GAMMA, LAMBDA, EPOCH, EPS)
     for i in range(MAX_EPISODE):
@@ -41,6 +43,9 @@ if __name__ == '__main__':
         agent.trajectory.clear()
         print(f"Episode：{i + 1}, Reward：{reward_total}")
 
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    model_path = current_path + '/models/'
+    torch.save(agent.actor.state_dict(), model_path + f"ddpg_actor_model.pth")
     agent.plot(agent.actor_loss, 'actor_epoch')
     agent.plot(agent.critic_loss, 'critic_epoch')
 

@@ -12,19 +12,15 @@ class PolicyNet(nn.Module):
         super(PolicyNet, self).__init__()
         self.f1 = nn.Linear(input_dim, 64)
         self.f2 = nn.Linear(64, 64)
-        self.mu = nn.Linear(64, output_dim)
-        self.std = nn.Linear(64, output_dim)
+        self.action_probs = nn.Linear(64, output_dim)
 
     def forward(self, x):
         x = F.relu(self.f1(x))
         x = F.relu(self.f2(x))
-        return F.sigmoid(self.mu(x)), F.softplus(self.std(x))
+        return F.softmax(self.action_probs(x), dim=-1)  # 输出动作概率
 
 
 class ValueNet(nn.Module):
-    """
-    V(s) 状态价值函数
-    """
     def __init__(self, input_dim):
         super(ValueNet, self).__init__()
         self.f1 = nn.Linear(input_dim, 64)
@@ -69,9 +65,10 @@ class Agent:
 
     def get_action(self, state):
         with torch.no_grad():
-            mu, std = self.actor(torch.tensor(state).unsqueeze(0))
-            gaussian_distribution = torch.distributions.Normal(mu, std)
-        return 1 if gaussian_distribution.sample().item() >= 0.5 else 0
+            action_probs = self.actor(torch.tensor(state).unsqueeze(0))
+            distribution = torch.distributions.Categorical(probs=action_probs)
+            action = distribution.sample()
+        return action.item()  # 返回动作索引
 
     def update(self):
         states, actions, next_states, rewards, dones = zip(*self.trajectory.sample())
@@ -95,18 +92,17 @@ class Agent:
             advantage = td_error[i] + self.gamma * self.lamda * advantage * (1 - dones[i])
             advantages[i] = advantage
 
-
         # computing old distribution
-        mu, std = self.actor(states)
-        gaussian_distribution = torch.distributions.Normal(mu.detach(), std.detach())
-        old_log_distribution = gaussian_distribution.log_prob(actions)
+        action_probs = self.actor(states).detach()  # 停止梯度更新
+        old_distribution = torch.distributions.Categorical(probs=action_probs)
+        old_log_distribution = old_distribution.log_prob(actions)
 
         # train epoch times
         for epoch_i in range(self.epoch):
             # computing new distribution
-            mu, std = self.actor(states)
-            gaussian_distribution = torch.distributions.Normal(mu, std)
-            log_distribution = gaussian_distribution.log_prob(actions)
+            action_probs = self.actor(states)
+            new_distribution = torch.distributions.Categorical(probs=action_probs)
+            log_distribution = new_distribution.log_prob(actions)
             ratio_distribution = torch.exp(log_distribution - old_log_distribution)
 
             term1 = ratio_distribution * advantages.detach()
