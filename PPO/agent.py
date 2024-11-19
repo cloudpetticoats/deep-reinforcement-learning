@@ -12,15 +12,13 @@ class PolicyNet(nn.Module):
         super(PolicyNet, self).__init__()
         self.f1 = nn.Linear(input_dim, 64)
         self.f2 = nn.Linear(64, 64)
-        self.f3 = nn.Linear(64, 64)
         self.mu = nn.Linear(64, output_dim)
         self.std = nn.Linear(64, output_dim)
 
     def forward(self, x):
         x = F.relu(self.f1(x))
         x = F.relu(self.f2(x))
-        x = F.relu(self.f3(x))
-        return F.tanh(self.mu(x)) * 2, F.softplus(self.std(x))
+        return F.sigmoid(self.mu(x)), F.softplus(self.std(x))
 
 
 class ValueNet(nn.Module):
@@ -31,14 +29,12 @@ class ValueNet(nn.Module):
         super(ValueNet, self).__init__()
         self.f1 = nn.Linear(input_dim, 64)
         self.f2 = nn.Linear(64, 64)
-        self.f3 = nn.Linear(64, 64)
-        self.f4 = nn.Linear(64, 1)
+        self.f3 = nn.Linear(64, 1)
 
     def forward(self, x):
         x = F.relu(self.f1(x))
         x = F.relu(self.f2(x))
-        x = F.relu(self.f3(x))
-        return self.f4(x)
+        return self.f3(x)
 
 
 class TrajectoryMemory:
@@ -75,7 +71,7 @@ class Agent:
         with torch.no_grad():
             mu, std = self.actor(torch.tensor(state).unsqueeze(0))
             gaussian_distribution = torch.distributions.Normal(mu, std)
-        return [gaussian_distribution.sample().item()]
+        return 1 if gaussian_distribution.sample().item() >= 0.5 else 0
 
     def update(self):
         states, actions, next_states, rewards, dones = zip(*self.trajectory.sample())
@@ -90,17 +86,15 @@ class Agent:
         target_val = self.critic(next_states)
         v_target_val = rewards + self.gamma * target_val * (1 - dones)
         v_val = self.critic(states)
-        td_error = v_val - v_target_val
+        td_error = v_target_val - v_val
 
         # computing GAE
-        td_error = td_error.detach().numpy()
-        advantages = []
+        advantages = torch.zeros_like(td_error)
         advantage = 0
-        for td in td_error[::-1]:
-            advantage = self.gamma * self.lamda * advantage + td
-            advantages.append(advantage)
-        advantages.reverse()
-        advantages = torch.FloatTensor(np.array(advantages))
+        for i in reversed(range(len(td_error))):
+            advantage = td_error[i] + self.gamma * self.lamda * advantage * (1 - dones[i])
+            advantages[i] = advantage
+
 
         # computing old distribution
         mu, std = self.actor(states)
@@ -115,8 +109,8 @@ class Agent:
             log_distribution = gaussian_distribution.log_prob(actions)
             ratio_distribution = torch.exp(log_distribution - old_log_distribution)
 
-            term1 = ratio_distribution * advantages
-            term2 = torch.clamp(ratio_distribution, 1 - self.eps, 1 + self.eps) * advantages
+            term1 = ratio_distribution * advantages.detach()
+            term2 = torch.clamp(ratio_distribution, 1 - self.eps, 1 + self.eps) * advantages.detach()
             new_v_val = self.critic(states)
 
             actor_loss = torch.mean(-torch.min(term1, term2))

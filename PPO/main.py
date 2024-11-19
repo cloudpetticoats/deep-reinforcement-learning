@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from agent import Agent
 
 # Hyperparameters
-MAX_EPISODE = 500
+MAX_EPISODE = 400
 MAX_TRAJECTORY_LENGTH = 200
-ACTOR_LR = 1e-3
-CRITIC_LR = 1e-4
-GAMMA = 0.98
+ACTOR_LR = 1e-4
+CRITIC_LR = 5e-3
+GAMMA = 0.99
 LAMBDA = 0.9
 EPOCH = 10
 EPS = 0.2
@@ -18,9 +18,9 @@ reward_list = []
 
 
 if __name__ == '__main__':
-    env = gym.make('Pendulum-v1')  # render_mode="human"
+    env = gym.make('CartPole-v1')  # render_mode="human"
     n_states = env.observation_space.shape[0]  # 3
-    n_actions = env.action_space.shape[0]  # 1
+    n_actions = 1  # 1
 
     agent = Agent(n_states, n_actions, MAX_TRAJECTORY_LENGTH, ACTOR_LR, CRITIC_LR, GAMMA, LAMBDA, EPOCH, EPS)
     for i in range(MAX_EPISODE):
