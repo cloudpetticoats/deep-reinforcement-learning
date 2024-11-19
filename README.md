@@ -16,6 +16,8 @@ For code questions, please submit an issue or contact via _email_ (my homepage s
 * Excellent Course：
     + [李宏毅深度强化学习公开课YouTube](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
 
+## ～～～～～～～Below are my study notes～～～～～～～
+
 # _3.The algorithm included in this project(Notes)_
 * **DDPG**
   + Add a baseline: Make the total reward when updating an actor have a positive or negative number. And not always positive.(因为随机sample样本训练，可能抽到不好的action去训练，并且这个action的reward又是正数，导致这个action概率增大~)
