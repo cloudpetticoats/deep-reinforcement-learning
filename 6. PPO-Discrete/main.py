@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     current_path = os.path.dirname(os.path.realpath(__file__))
     model_path = current_path + '/models/'
-    torch.save(agent.actor.state_dict(), model_path + f"ddpg_actor_model.pth")
+    torch.save(agent.actor.state_dict(), model_path + f"ppo_actor_model.pth")
     agent.plot(agent.actor_loss, 'actor_epoch')
     agent.plot(agent.critic_loss, 'critic_epoch')
 
