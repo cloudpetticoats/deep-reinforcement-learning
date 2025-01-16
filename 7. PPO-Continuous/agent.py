@@ -1,30 +1,32 @@
+from collections import deque
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from collections import deque
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 class PolicyNet(nn.Module):
-    def __init__(self, input_dim, output_dim):
+    def __init__(self, input_dim, output_dim, max_action):
         super(PolicyNet, self).__init__()
         self.f1 = nn.Linear(input_dim, 64)
         self.f2 = nn.Linear(64, 64)
-        self.mu = nn.Linear(64, output_dim)
-        self.std = nn.Linear(64, output_dim)
+        self.mean = nn.Linear(64, output_dim)
+        self.log_std = nn.Parameter(torch.zeros(1, output_dim))  # trick: Independent std
+        self.max_action = max_action
 
     def forward(self, x):
         x = F.relu(self.f1(x))
         x = F.relu(self.f2(x))
-        return F.sigmoid(self.mu(x)), F.softplus(self.std(x))
+        mean = torch.tanh(self.mean(x)) * self.max_action
+        log_std = self.log_std.expand_as(mean)  # To make 'log_std' have the same dimension as 'mean'
+        std = torch.exp(log_std)
+        return mean, std
 
 
 class ValueNet(nn.Module):
-    """
-    V(s) 状态价值函数
-    """
     def __init__(self, input_dim):
         super(ValueNet, self).__init__()
         self.f1 = nn.Linear(input_dim, 64)
@@ -52,8 +54,8 @@ class TrajectoryMemory:
 
 
 class Agent:
-    def __init__(self, input_dim, output_dim, max_trajectory_length, actor_lr, critic_lr, gamma, lamda, epoch, eps):
-        self.actor = PolicyNet(input_dim, output_dim)
+    def __init__(self, input_dim, output_dim, max_trajectory_length, actor_lr, critic_lr, gamma, lamda, epoch, eps, max_action):
+        self.actor = PolicyNet(input_dim, output_dim, max_action)
         self.critic = ValueNet(input_dim)
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=actor_lr)
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=critic_lr)
@@ -63,49 +65,56 @@ class Agent:
         self.lamda = lamda
         self.epoch = epoch
         self.eps = eps
+        self.max_action = max_action
 
         self.actor_loss = []
         self.critic_loss = []
 
     def get_action(self, state):
         with torch.no_grad():
-            mu, std = self.actor(torch.tensor(state).unsqueeze(0))
-            gaussian_distribution = torch.distributions.Normal(mu, std)
-        return 1 if gaussian_distribution.sample().item() >= 0.5 else 0
+            mean, std = self.actor(torch.FloatTensor(state).unsqueeze(0))
+            gaussian_distribution = torch.distributions.Normal(mean, std)
+            a = gaussian_distribution.sample()
+            a = torch.clamp(a, -self.max_action, self.max_action)
+        return np.array([a.item()])
 
     def update(self):
         states, actions, next_states, rewards, dones = zip(*self.trajectory.sample())
 
         states = torch.FloatTensor(np.array(states))
-        actions = torch.FloatTensor(actions)
+        actions = torch.FloatTensor(np.array(actions))
         next_states = torch.FloatTensor(np.array(next_states))
         rewards = torch.FloatTensor(rewards).unsqueeze(1)
         dones = torch.FloatTensor(dones).unsqueeze(1)
 
-        # computing TD-error
-        target_val = self.critic(next_states)
-        v_target_val = rewards + self.gamma * target_val * (1 - dones)
-        v_val = self.critic(states)
-        td_error = v_target_val - v_val
+        with torch.no_grad():
+            # computing TD-error
+            target_val = self.critic(next_states)
+            v_target_val = rewards + self.gamma * target_val * (1 - dones)
+            v_val = self.critic(states)
+            td_error = v_target_val - v_val
 
-        # computing GAE
-        advantages = torch.zeros_like(td_error)
-        advantage = 0
-        for i in reversed(range(len(td_error))):
-            advantage = td_error[i] + self.gamma * self.lamda * advantage * (1 - dones[i])
-            advantages[i] = advantage
-
+            # computing GAE
+            advantages = torch.zeros_like(td_error)
+            advantage = 0
+            for i in reversed(range(len(td_error))):
+                advantage = td_error[i] + self.gamma * self.lamda * advantage * (1 - dones[i])
+                advantages[i] = advantage
+            # trick: normalized GAE
+            mean = advantages.mean()
+            std = advantages.std()
+            advantages = (advantages - mean) / std
 
         # computing old distribution
-        mu, std = self.actor(states)
-        gaussian_distribution = torch.distributions.Normal(mu.detach(), std.detach())
+        mean, std = self.actor(states)
+        gaussian_distribution = torch.distributions.Normal(mean.detach(), std.detach())
         old_log_distribution = gaussian_distribution.log_prob(actions)
 
         # train epoch times
         for epoch_i in range(self.epoch):
             # computing new distribution
-            mu, std = self.actor(states)
-            gaussian_distribution = torch.distributions.Normal(mu, std)
+            mean, std = self.actor(states)
+            gaussian_distribution = torch.distributions.Normal(mean, std)
             log_distribution = gaussian_distribution.log_prob(actions)
             ratio_distribution = torch.exp(log_distribution - old_log_distribution)
 
