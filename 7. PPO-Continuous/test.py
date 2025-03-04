@@ -7,7 +7,7 @@ import gym
 
 if __name__ == '__main__':
     current_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = current_path + '/models/ppo_actor_net.pth'
+    model_path = current_path + '/models/ppo_actor_net_20250304.pth'
 
     environment = gym.make(id='Pendulum-v1', render_mode="human")
     state_num = environment.observation_space.shape[0]

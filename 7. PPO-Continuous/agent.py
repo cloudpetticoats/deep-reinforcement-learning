@@ -19,8 +19,8 @@ class PolicyNet(nn.Module):
         self.max_action = max_action
 
     def forward(self, x):
-        x = F.relu(self.f1(x))
-        x = F.relu(self.f2(x))
+        x = F.tanh(self.f1(x))  # trick: use tanh activation function
+        x = F.tanh(self.f2(x))
         mean = torch.tanh(self.mean(x)) * self.max_action
         return mean
 
@@ -40,8 +40,8 @@ class ValueNet(nn.Module):
         self.f3 = nn.Linear(64, 1)
 
     def forward(self, x):
-        x = F.relu(self.f1(x))
-        x = F.relu(self.f2(x))
+        x = F.tanh(self.f1(x))
+        x = F.tanh(self.f2(x))
         return self.f3(x)
 
 
@@ -111,11 +111,6 @@ class Agent:
             mean = advantages.mean()
             std = advantages.std()
             advantages = (advantages - mean) / std
-
-        # computing old distribution
-        # mean, std = self.actor(states)
-        # gaussian_distribution = torch.distributions.Normal(mean.detach(), std.detach())
-        # old_log_distribution = gaussian_distribution.log_prob(actions)
 
         # train epoch times
         for epoch_i in range(self.epoch):

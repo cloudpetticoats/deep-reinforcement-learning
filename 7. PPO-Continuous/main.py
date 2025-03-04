@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     current_path = os.path.dirname(os.path.realpath(__file__))
     model_path = current_path + '/models/'
-    torch.save(agent.actor.state_dict(), model_path + "ppo_actor_net.pth")
+    torch.save(agent.actor.state_dict(), model_path + "ppo_actor_net_20250304.pth")
     env.close()
 
     plt.plot(range(len(reward_list)), reward_list, color='b')
