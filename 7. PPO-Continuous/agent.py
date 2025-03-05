@@ -116,9 +116,9 @@ class Agent:
         for epoch_i in range(self.epoch):
             # computing new distribution
             gaussian_distribution = self.actor.get_dist(states)
-            dist_entropy = gaussian_distribution.entropy().sum(1, keepdim=True)
+            dist_entropy = gaussian_distribution.entropy()
             new_log_distribution = gaussian_distribution.log_prob(actions)
-            ratios = torch.exp(new_log_distribution.sum(1, keepdim=True) - a_log_probs.sum(1, keepdim=True))
+            ratios = torch.exp(new_log_distribution - a_log_probs)
 
             term1 = ratios * advantages.detach()
             term2 = torch.clamp(ratios, 1 - self.eps, 1 + self.eps) * advantages.detach()
