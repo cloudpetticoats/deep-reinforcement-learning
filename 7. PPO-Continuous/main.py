@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 
 # Hyperparameters
 MAX_EPISODE = 800
-MAX_TRAJECTORY_LENGTH = 200
-ACTOR_LR = 3e-4
+MAX_TRAJECTORY_LENGTH = 250
+ACTOR_LR = 2e-4
 CRITIC_LR = 2e-3
 GAMMA = 0.95
 LAMBDA = 0.9
-EPOCH = 15
-EPS = 0.15
+EPOCH = 20
+EPS = 0.2
 ENTROPY_COEF = 0.01
 
 
