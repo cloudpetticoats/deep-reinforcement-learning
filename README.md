@@ -24,14 +24,14 @@ However, if you plan to use 4.Noisy-DQN or 8.MADDPG, please proceed with caution
 
 # _2.Usage_
 
-It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.2](#2.2). If you want to train the model yourself, please see B.
+It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.2](#2.2-Configure-the-Environment). If you want to train the model yourself, please see B.
 
 ### 2.1 Download Repo Code
 ```
 git clone https://github.com/cloudpetticoats/deep-reinforcement-learning.git
 ```
 
-### 2.2 Configure the Environment {#2.2}
+### 2.2 Configure the Environment
 
 We are using common dependencies, so version issues are unlikely to occur. You can directly use your existing environment.
 
