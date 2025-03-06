@@ -111,13 +111,13 @@ We tested our code in the Gym, and some of the results are as follows.
 </table>
 
 # _4.Reference_
-* Excellent Weblog：
-    + [How to choose a deep reinforcement learning algorithm? (MuZero, SAC, PPO, TD3, DDPG, DQN, etc.)](https://zhuanlan.zhihu.com/p/342919579)
-    + [Hyperparameter Tuning Techniques in Deep Reinforcement Learning: Examples from D3QN, TD3, PPO, and SAC Algorithms](https://zhuanlan.zhihu.com/p/345353294)
-    + [PPO Hyperparameter Tuning Tricks](https://zhuanlan.zhihu.com/p/512327050)
-* Excellent Web：
-    + [Deep Reinforcement Learning Laboratory](https://www.deeprlhub.com/)
-    + [Mushroom Book](https://datawhalechina.github.io/easy-rl/#/)
-    + [hujian@gitbook](https://hujian.gitbook.io/deep-reinforcement-learning)
-* Excellent Course：
-    + [Professor Li Hongyi's Deep Reinforcement Learning Online Course](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
+### 4.1 Excellent Weblog
+- [How to choose a deep reinforcement learning algorithm? (MuZero, SAC, PPO, TD3, DDPG, DQN, etc.)](https://zhuanlan.zhihu.com/p/342919579)
+- [Hyperparameter Tuning Techniques in Deep Reinforcement Learning: Examples from D3QN, TD3, PPO, and SAC Algorithms](https://zhuanlan.zhihu.com/p/345353294)
+- [PPO Hyperparameter Tuning Tricks](https://zhuanlan.zhihu.com/p/512327050)
+### 4.2 Excellent Web
+- [Deep Reinforcement Learning Laboratory](https://www.deeprlhub.com/)
+- [Mushroom Book](https://datawhalechina.github.io/easy-rl/#/)
+- [hujian@gitbook](https://hujian.gitbook.io/deep-reinforcement-learning)
+### Excellent Course
+- [Professor Li Hongyi's Deep Reinforcement Learning Online Course](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
