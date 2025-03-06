@@ -24,7 +24,7 @@ However, if you plan to use 4.Noisy-DQN or 8.MADDPG, please proceed with caution
 
 # _2.Usage_
 
-It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.2](#22-configure-the-environment). If you want to train the model yourself, please see B.
+It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.3](#23-for-testing). If you want to train the model yourself, please see [2.4](#24-for-training).
 
 ### 2.1 Download Repo Code
 ```
@@ -33,8 +33,7 @@ git clone https://github.com/cloudpetticoats/deep-reinforcement-learning.git
 
 ### 2.2 Configure the Environment
 
-We are using common dependencies, so version issues are unlikely to occur. You can directly use your existing environment.
-
+We are using common dependencies, so version issues are unlikely to occur. You can directly use your existing environment. Don't need the same version as me.
 
 But if you encounter any environment issues, here is my environment for reference.
 ```
@@ -47,11 +46,11 @@ PettingZoo 1.24.3
 
 ### 2.3 For Testing
 
-If you don't want to train the model yourself. We have provided the trained model under `./models/` of each algorithm. You can run `test.py` directly for visualization testing.
+If you don't want to train the model yourself. In each algorithm, we have provided the trained model under `./models/` of each algorithm. You can run `test.py` directly for visualization testing.
 
 ### 2.4 For Training
 
-If you want to train the model yourself. In each algorithm, run `main.py` to train, save the trained model to the `./models/` directory, and then run `test.py` to perform visualization tests. 
+If you want to train the model yourself. In each algorithm, run `main.py` to train, save the trained model to the `./models/` directory, and then run `test.py` to perform visualization testing. 
 
 # _3.Performance_
 
