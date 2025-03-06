@@ -40,9 +40,9 @@ But if you encounter any environment issues, here is my environment for referenc
 ```
 Python 3.9
 PyTorch 2.6.0
-gym 0.26.2
-matplotlib 3.9.1
-pettingzoo 1.24.3
+Gym 0.26.2
+Matplotlib 3.9.1
+PettingZoo 1.24.3
 ```
 
 ### 2.3 For Visualization Evaluation
@@ -53,7 +53,66 @@ If you don't want to train the model yourself. We have provided the trained mode
 
 If you want to train the model yourself. In each algorithm, run `main.py` to train, save the trained model to the `./models/` directory, and then run `test.py` to perform visualization tests. 
 
-# _3.Reference_
+# _3.Performance_
+
+We tested our code in the Gym, and some of the results are as follows.
+
+<table style="width:100%; text-align:center;">
+  <tr>
+    <td style="vertical-align: top;">
+      <div>
+        <strong>CartPole-v1(DQN)</strong>
+      </div>
+      <div>
+        <img src="./images/dqn-train.png" alt="Image 1" width="100%" height="100%">
+      </div>
+    </td>
+    <td style="vertical-align: top;">
+      <div>
+        <strong>CartPole-v1(Double-DQN)</strong>
+      </div>
+      <div>
+        <img src="./images/double-dqn.png" alt="Image 2" width="100%" height="100%">
+      </div>
+    </td>
+    <td style="vertical-align: top;">
+      <div>
+        <strong>CartPole-v1(Dueling-DQN)</strong>
+      </div>
+      <div>
+        <img src="./images/dueling-dqn-res.png" alt="Image 3" width="100%" height="100%">
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="vertical-align: top;">
+      <div>
+        <strong>Pendulum-v1(DDPG)</strong>
+      </div>
+      <div>
+        <img src="./images/ddpg.png" alt="Image 4" width="100%" height="100%">
+      </div>
+    </td>
+    <td style="vertical-align: top;">
+      <div>
+        <strong>CartPole-v0(PPO-Discrete)</strong>
+      </div>
+      <div>
+        <img src="./images/ppo_d.png" alt="Image 5" width="100%" height="100%">
+      </div>
+    </td>
+    <td style="vertical-align: top;">
+      <div>
+        <strong>Pendulum-v1(PPO-Continuous)</strong>
+      </div>
+      <div>
+        <img src="./images/ppo_c.png" alt="Image 6" width="100%" height="100%">
+      </div>
+    </td>
+  </tr>
+</table>
+
+# _4.Reference_
 * Excellent Weblog：
     + [How to choose a deep reinforcement learning algorithm? (MuZero, SAC, PPO, TD3, DDPG, DQN, etc.)](https://zhuanlan.zhihu.com/p/342919579)
     + [Hyperparameter Tuning Techniques in Deep Reinforcement Learning: Examples from D3QN, TD3, PPO, and SAC Algorithms](https://zhuanlan.zhihu.com/p/345353294)

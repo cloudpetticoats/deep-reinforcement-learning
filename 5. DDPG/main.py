@@ -60,7 +60,6 @@ if __name__ == '__main__':
 
     agent.plot()
     plt.plot(range(len(reward_list)), reward_list, color='b')
-    plt.title('reward')
     plt.xlabel('episode')
     plt.ylabel('reward')
     plt.show()

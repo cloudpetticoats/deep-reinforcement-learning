@@ -1,5 +1,2 @@
 # Main Idea
 Based on DQN, the network structure is modified such that the output position is the sum of two results. Additionally, a constraint needs to be applied to the output vector, such as normalizing it so that the sum of the elements in the vector always equals zero.
-# Result
-![dueling-dqn-res.png](./../images/dueling-dqn-res.png)
-![dqn-game.png](./../images/dqn-game.png)

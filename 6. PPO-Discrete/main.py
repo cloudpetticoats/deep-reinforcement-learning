@@ -49,7 +49,7 @@ if __name__ == '__main__':
     agent.plot(agent.actor_loss, 'actor_epoch')
     agent.plot(agent.critic_loss, 'critic_epoch')
 
-    plt.plot(range(len(reward_list)), reward_list, color='r')
+    plt.plot(range(len(reward_list)), reward_list, color='b')
     plt.xlabel('episode')
     plt.ylabel('reward')
     plt.show()
