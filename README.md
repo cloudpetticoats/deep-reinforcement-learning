@@ -3,7 +3,6 @@ This repository provides implementations of common **Deep Reinforcement Learning
 
 If you have any questions about the code, feel free to submit an issue or contact me via _my email_ (available on [my homepage](https://github.com/cloudpetticoats)).
 
-
 ⚠️ <font color=#FF0000 >Important Note:</font>
 
 All algorithms in this repository, except for 4.Noisy-DQN and 8.MADDPG, have been thoroughly tested and can be used with confidence. 😍
