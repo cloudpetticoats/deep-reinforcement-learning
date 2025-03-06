@@ -1,5 +1,3 @@
-# 核心思想
-![baseline.png](./../images/dqn.png)
-# 实现
+# 1.Result
 ![dqn-train.png](./../images/dqn-train.png)
 ![dqn-game.png](./../images/dqn-game.png)
