@@ -60,7 +60,7 @@ We tested our code in the Gym, and some of the results are as follows.
 <table style="width:100%; text-align:center;">
   <tr>
     <td style="vertical-align: top;">
-      <div>
+      <div style="text-align: center;">
         <strong>CartPole-v1(DQN)</strong>
       </div>
       <div>
@@ -68,7 +68,7 @@ We tested our code in the Gym, and some of the results are as follows.
       </div>
     </td>
     <td style="vertical-align: top;">
-      <div>
+      <div style="text-align: center;">
         <strong>CartPole-v1(Double-DQN)</strong>
       </div>
       <div>
@@ -76,7 +76,7 @@ We tested our code in the Gym, and some of the results are as follows.
       </div>
     </td>
     <td style="vertical-align: top;">
-      <div>
+      <div style="text-align: center;">
         <strong>CartPole-v1(Dueling-DQN)</strong>
       </div>
       <div>
@@ -86,7 +86,7 @@ We tested our code in the Gym, and some of the results are as follows.
   </tr>
   <tr>
     <td style="vertical-align: top;">
-      <div>
+      <div style="text-align: center;">
         <strong>Pendulum-v1(DDPG)</strong>
       </div>
       <div>
@@ -94,7 +94,7 @@ We tested our code in the Gym, and some of the results are as follows.
       </div>
     </td>
     <td style="vertical-align: top;">
-      <div>
+      <div style="text-align: center;">
         <strong>CartPole-v0(PPO-Discrete)</strong>
       </div>
       <div>
@@ -102,7 +102,7 @@ We tested our code in the Gym, and some of the results are as follows.
       </div>
     </td>
     <td style="vertical-align: top;">
-      <div>
+      <div style="text-align: center;">
         <strong>Pendulum-v1(PPO-Continuous)</strong>
       </div>
       <div>
