@@ -24,7 +24,7 @@ However, if you plan to use 4.Noisy-DQN or 8.MADDPG, please proceed with caution
 
 # _2.Usage_
 
-It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.2](#2.2-Configure-the-Environment). If you want to train the model yourself, please see B.
+It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.2](#22-configure-the-environment). If you want to train the model yourself, please see B.
 
 ### 2.1 Download Repo Code
 ```
