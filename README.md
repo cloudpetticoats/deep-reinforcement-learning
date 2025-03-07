@@ -45,7 +45,7 @@ PettingZoo 1.24.3
 
 ### 2.3 For Testing
 
-If you don't want to train the model yourself. In each algorithm, we have provided the trained model under `./models/` of each algorithm. You can run `test.py` directly for visualization testing.
+If you don't want to train the model yourself. In each algorithm, we have provided the trained model under `./models/` directory. You can run `test.py` directly for visualization testing.
 
 ### 2.4 For Training
 
