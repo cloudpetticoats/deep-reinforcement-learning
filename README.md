@@ -119,5 +119,5 @@ We tested our code in the Gym, and some of the results are as follows.
 - [Deep Reinforcement Learning Laboratory](https://www.deeprlhub.com/)
 - [Mushroom Book](https://datawhalechina.github.io/easy-rl/#/)
 - [hujian@gitbook](https://hujian.gitbook.io/deep-reinforcement-learning)
-### Excellent Course
-- [Professor Li Hongyi's Deep Reinforcement Learning Online Course](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
+### 4.3 Excellent Course
+- [Professor Hung-yi Lee's Deep Reinforcement Learning Online Course](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
