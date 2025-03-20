@@ -1,20 +1,16 @@
-from collections import deque
 import random
+
+import numpy as np
 import torch.nn as nn
 import torch
 import torch.optim as optim
 
-# Hyperparameters
-LR = 1e-4
-MEMORY_SIZE = 10000
-BATCH_SIZE = 128
-GAMMA = 0.99
-UPDATE_TARGET = 100
+from collections import deque
 
 
 class Q_net(nn.Module):
     """
-    Dueling-DQN对于 DQN，只改变了这里的网络结构
+    Dueling DQN only modifies the network architecture here compared to DQN
     """
     def __init__(self, input_dim, output_dim):
         super(Q_net, self).__init__()
@@ -39,49 +35,48 @@ class Memory:
     def __len__(self):
         return len(self.memory)
 
-    def push(self, state, action, next_state, reward, end):
-        self.memory.append((torch.tensor(state), action, torch.tensor(next_state), reward, end))
+    def store_transition(self, state, action, next_state, reward, end):
+        self.memory.append((state, action, next_state, reward, end))
 
     def sample(self, batch_size):
         return random.sample(self.memory, batch_size)
 
 
 class Agent:
-    def __init__(self, state_dim, action_dim):
-
+    def __init__(self, state_dim, action_dim, lr, buffer_size, batch_size, gamma, update_interval):
         self.q_net = Q_net(state_dim, action_dim)
         self.target_q_net = Q_net(state_dim, action_dim)
         self.target_q_net.load_state_dict(self.q_net.state_dict())
-        self.q_net_optimizer = optim.AdamW(self.q_net.parameters(), lr=LR, amsgrad=True)
+        self.q_net_optimizer = optim.AdamW(self.q_net.parameters(), lr=lr, amsgrad=True)
+        self.memory = Memory(buffer_size)
 
-        self.memory = Memory(MEMORY_SIZE)
-
+        self.batch_size = batch_size
+        self.gamma = gamma
+        self.update_interval = update_interval
         self.update_count = 0
 
     def get_action(self, state):
-        # 禁用自动梯度计算
         with torch.no_grad():
             return self.q_net(torch.tensor(state).unsqueeze(0))[0].max(0).indices.item()
 
     def update(self):
-        if len(self.memory) < BATCH_SIZE:
+        if len(self.memory) < self.batch_size:
             return
 
-        # state :[ 0.00953062  0.04529195 -0.00640777 -0.035508  ]  action : 0
-        states, actions, next_states, rewards, ends = zip(*self.memory.sample(BATCH_SIZE))
-        states = torch.stack(states)
+        states, actions, next_states, rewards, ends = zip(*self.memory.sample(self.batch_size))
+        states = torch.FloatTensor(np.array(states))
         actions = torch.tensor(actions).unsqueeze(1)
-        rewards = torch.tensor(rewards).unsqueeze(1)
-        next_states = torch.stack(next_states)
+        rewards = torch.FloatTensor(rewards).unsqueeze(1)
+        next_states = torch.FloatTensor(np.array(next_states))
         ends = torch.FloatTensor(ends).unsqueeze(1)
 
-        # q_net的Q值（动作状态函数）
+        # compute q value
         q = self.q_net(states).gather(1, actions)
 
-        # target_q of target_q_net
+        # compute target_q value
         with torch.no_grad():
             max_target_q_net = self.target_q_net(next_states).max(1).values.unsqueeze(1)
-            target_q = rewards + (1 - ends) * GAMMA * max_target_q_net
+            target_q = rewards + (1 - ends) * self.gamma * max_target_q_net
 
         loss = nn.MSELoss()(q, target_q)
         self.q_net_optimizer.zero_grad()
@@ -89,6 +84,6 @@ class Agent:
         self.q_net_optimizer.step()
 
         self.update_count += 1
-
-        if self.update_count % UPDATE_TARGET == 0:
+        # update target q network
+        if self.update_count % self.update_interval == 0:
             self.target_q_net.load_state_dict(self.q_net.state_dict())
