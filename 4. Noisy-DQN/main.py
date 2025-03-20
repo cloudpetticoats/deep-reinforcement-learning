@@ -8,9 +8,9 @@ from common.tools import plot_reward, save_model
 
 """
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-|     Note: Noisy-DQN does not converge.                                       |
+|    Note: Noisy-DQN does not converge.                                        |
 |    There are issues with the current code, and it will be improved later.    |
-|      Please do not use it for now.                                           |
+|    Please do not use it for now.                                             |
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 """
 
