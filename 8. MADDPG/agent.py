@@ -4,11 +4,11 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import random
+
 from collections import deque
 
 
 class Actor(nn.Module):
-    # Actor网络，用于生成确定性动作
     def __init__(self, input_dim, output_dim, hidden_dim):
         super(Actor, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -18,12 +18,11 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.softmax(self.fc3(x), dim=1)  # 输出动作，通过softmax limited
+        x = F.softmax(self.fc3(x), dim=1)
         return x
 
 
 class Critic(nn.Module):
-    # Critic网络，用于估计Q值
     def __init__(self, input_dim, hidden_dim):
         super(Critic, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -34,7 +33,7 @@ class Critic(nn.Module):
         x = torch.cat((o, a), dim=1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = self.fc3(x)  # 最后一层输出Q值
+        x = self.fc3(x)
         return x
 
 
@@ -54,22 +53,22 @@ class ReplayBuffer:
 
 class MADDPG:
     def __init__(self, actor_input_dims, actor_output_dim, critic_input_dim, agent_num, lr_actor=1e-2, lr_critic=1e-3, gamma=0.99, tau=0.01, replay_buffer_capacity=8192, batch_size=64):
-        self.agent_num = agent_num  # 智能体数量
+        self.agent_num = agent_num
         self.gamma = gamma
         self.tau = tau
         self.batch_size = batch_size
 
-        # 初始化每个智能体的actor网络和target_actor网络
+        # Initialize each agent's actor network and target actor network
         self.actors = [Actor(actor_input_dims[i], actor_output_dim[i], 64) for i in range(agent_num)]
         self.target_actors = [Actor(actor_input_dims[i], actor_output_dim[i], 64) for i in range(agent_num)]
         self.actor_optimizers = [optim.Adam(self.actors[i].parameters(), lr=lr_actor) for i in range(agent_num)]
 
-        # 初始化每个智能体的critic网络和target_critic网络
+        # Initialize each agent's critic network and target critic network
         self.critics = [Critic(critic_input_dim, 64) for _ in range(agent_num)]
         self.target_critics = [Critic(critic_input_dim, 64) for _ in range(agent_num)]
         self.critic_optimizers = [optim.Adam(self.critics[i].parameters(), lr=lr_critic) for i in range(agent_num)]
 
-        # initialize replay buffer for every agent
+        # Initialize replay buffer for every agent
         self.replay_buffers = [ReplayBuffer(replay_buffer_capacity) for _ in range(agent_num)]
 
         self.update_target_networks(tau=1.0)
@@ -78,7 +77,7 @@ class MADDPG:
         self.loss_critics = [[] for _ in range(agent_num)]
 
     def update_target_networks(self, tau=None):
-        # 软更新目标网络
+        # soft update
         tau = self.tau if tau is None else tau
         for i in range(self.agent_num):
             for target_param, param in zip(self.target_actors[i].parameters(), self.actors[i].parameters()):
@@ -88,7 +87,7 @@ class MADDPG:
 
     def choose_action(self, observation, agent_idx):
         obs = torch.FloatTensor(observation).unsqueeze(0)
-        return self.actors[agent_idx](obs).detach().numpy()[0]  # 获取动作并转为numpy
+        return self.actors[agent_idx](obs).detach().numpy()[0]
 
     def update(self, target_train_flag):
         if len(self.replay_buffers[0]) < self.batch_size:
