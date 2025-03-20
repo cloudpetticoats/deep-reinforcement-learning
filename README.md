@@ -18,7 +18,7 @@ However, if you plan to use 4.Noisy-DQN or 8.MADDPG, please proceed with caution
 - ✅ [PPO-Continuous](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/7.%20PPO-Continuous) – Implementation & Testing
 - 🔧 Noisy-DQN – Debugging
 - 🔧 MADDPG – Debugging
-- 🚧 SAC – Implementation in Progress
+- ✅ [SAC](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/9.%20SAC) – Implementation & Testing
 - 🚧 DSAC – Implementation in Progress
 
 # _2.Usage_
