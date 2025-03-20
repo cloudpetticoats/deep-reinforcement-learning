@@ -13,7 +13,7 @@ def init_parameters():
     parser = argparse.ArgumentParser(description="SAC Hyperparameters")
     parser.add_argument("--env_name", type=str, default="Pendulum-v1", help="Environment name")
     parser.add_argument("--episode_length", type=int, default=200, help="Total episode length")
-    parser.add_argument("--step_length", type=int, default=200, help="step length for each episode")
+    parser.add_argument("--step_length", type=int, default=200, help="Step length for each episode")
     parser.add_argument("--actor_lr", type=float, default=1e-3, help="Learning rate for actor network")
     parser.add_argument("--critic_lr", type=float, default=3e-3, help="Learning rate for critic network")
     parser.add_argument("--entropy_lr", type=float, default=3e-4, help="Learning rate for entropy tuning")
