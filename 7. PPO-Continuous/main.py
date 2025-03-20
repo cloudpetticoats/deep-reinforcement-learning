@@ -1,38 +1,45 @@
-from agent import Agent
-from normalization import Normalization, RewardScaling
-
 import gym
 import os.path
-import torch
-import matplotlib.pyplot as plt
+import argparse
+
+from agent import Agent
+from normalization import Normalization, RewardScaling
+from common.tools import plot_reward, save_model
 
 
-# Hyperparameters
-MAX_EPISODE = 800
-MAX_TRAJECTORY_LENGTH = 250
-ACTOR_LR = 2e-4
-CRITIC_LR = 2e-3
-GAMMA = 0.95
-LAMBDA = 0.9
-EPOCH = 20
-EPS = 0.2
-ENTROPY_COEF = 0.01
-
-
-reward_list = []
+def init_parameters():
+    """
+    Initialize the parameters required for the algorithm.
+    """
+    parser = argparse.ArgumentParser(description="PPO-Continue Hyperparameters")
+    parser.add_argument("--env_name", type=str, default="Pendulum-v1", help="Environment name")
+    parser.add_argument("--episode_length", type=int, default=1000, help="Total episode length")
+    parser.add_argument("--actor_lr", type=float, default=2e-4, help="Learning rate for actor network")
+    parser.add_argument("--critic_lr", type=float, default=2e-3, help="Learning rate for critic network")
+    parser.add_argument("--trajectory_length", type=int, default=250, help="Batch size for training")
+    parser.add_argument("--gamma", type=float, default=0.95, help="Discount factor for reward")
+    parser.add_argument("--Lambda", type=float, default=0.9, help="Lambda for PPO")
+    parser.add_argument("--epoch", type=int, default=20, help="Train epoch times for each trajectory")
+    parser.add_argument("--eps", type=float, default=0.2, help="Clip")
+    parser.add_argument("--entropy_coef", type=float, default=0.01, help="Entropy_coef")
+    arg = parser.parse_args()
+    print(arg)
+    return arg
 
 
 if __name__ == '__main__':
-    env = gym.make('Pendulum-v1')  # render_mode="human"
+    args = init_parameters()
+    env = gym.make(args.env_name)
     n_states = env.observation_space.shape[0]
     n_actions = env.action_space.shape[0]
     max_action = env.action_space.high[0]
     # state_norm = Normalization(shape=n_states)
-    scaling_reward = RewardScaling(shape=1, gamma=GAMMA)
+    scaling_reward = RewardScaling(shape=1, gamma=args.gamma)
 
-    agent = Agent(n_states, n_actions, MAX_TRAJECTORY_LENGTH, ACTOR_LR,
-                  CRITIC_LR, GAMMA, LAMBDA, EPOCH, EPS, max_action, ENTROPY_COEF)
-    for i in range(MAX_EPISODE):
+    agent = Agent(n_states, n_actions, args.trajectory_length, args.actor_lr, args.critic_lr,
+                  args.gamma, args.Lambda, args.epoch, args.eps, max_action, args.entropy_coef)
+    reward_list = []
+    for i in range(args.episode_length):
         state, info = env.reset()
         scaling_reward.reset()
         done = False
@@ -48,21 +55,13 @@ if __name__ == '__main__':
             agent.trajectory.add(state, action, a_log_prob, next_state, reward, done)
             state = next_state
 
-        reward_list.append(reward_total)
-
         agent.update()
         agent.trajectory.clear()
+
+        reward_list.append(reward_total)
         print(f"Episode：{i + 1}, Reward：{reward_total}")
 
-    agent.plot(agent.actor_loss, 'actor_epoch')
-    agent.plot(agent.critic_loss, 'critic_epoch')
-
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = current_path + '/models/'
-    torch.save(agent.actor.state_dict(), model_path + "ppo_actor_net_20250304.pth")
-    env.close()
-
-    plt.plot(range(len(reward_list)), reward_list, color='b')
-    plt.xlabel('episode')
-    plt.ylabel('reward')
-    plt.show()
+    # save model
+    save_model(os.path.dirname(os.path.realpath(__file__)), agent.actor.state_dict(), 'ppo_policy')
+    # plot reward curve
+    plot_reward(reward_list, 30)

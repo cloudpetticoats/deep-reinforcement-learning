@@ -1,12 +1,11 @@
-from collections import deque
-from torch.distributions import Normal
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-import matplotlib.pyplot as plt
+
+from collections import deque
+from torch.distributions import Normal
 
 
 class PolicyNet(nn.Module):
@@ -74,9 +73,6 @@ class Agent:
         self.max_action = max_action
         self.entropy_coef = entropy_coef
 
-        self.actor_loss = []
-        self.critic_loss = []
-
     def get_action(self, state):
         with torch.no_grad():
             gaussian_dist = self.actor.get_dist(torch.FloatTensor(state).unsqueeze(0))
@@ -123,13 +119,9 @@ class Agent:
             term1 = ratios * advantages.detach()
             term2 = torch.clamp(ratios, 1 - self.eps, 1 + self.eps) * advantages.detach()
             new_v_val = self.critic(states)
-
             # trick: policy entropy
             actor_loss = torch.mean(-torch.min(term1, term2) - self.entropy_coef * dist_entropy)
             critic_loss = torch.mean(F.mse_loss(new_v_val, v_target_val.detach()))
-
-            self.actor_loss.append(actor_loss.item())
-            self.critic_loss.append(critic_loss.item())
 
             self.actor_optimizer.zero_grad()
             actor_loss.backward()
@@ -137,9 +129,3 @@ class Agent:
             self.critic_optimizer.zero_grad()
             critic_loss.backward()
             self.critic_optimizer.step()
-
-    def plot(self, data, x_label):
-        plt.plot(range(len(data)), data, color='r')
-        plt.xlabel(x_label)
-        plt.ylabel('loss')
-        plt.show()
