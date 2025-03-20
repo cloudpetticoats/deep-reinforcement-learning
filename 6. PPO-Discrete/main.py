@@ -1,55 +1,59 @@
 import gym
-import matplotlib.pyplot as plt
-import torch
 import os
+import argparse
 
 from agent import Agent
-
-# Hyperparameters
-MAX_EPISODE = 1000
-MAX_TRAJECTORY_LENGTH = 200
-ACTOR_LR = 1e-4
-CRITIC_LR = 1e-4
-GAMMA = 0.98
-LAMBDA = 0.95
-EPOCH = 10
-EPS = 0.2
+from common.tools import plot_reward, save_model
 
 
-reward_list = []
+def init_parameters():
+    """
+    Initialize the parameters required for the algorithm.
+    """
+    parser = argparse.ArgumentParser(description="PPO-Discrete Hyperparameters")
+    parser.add_argument("--env_name", type=str, default="CartPole-v0", help="Environment name")
+    parser.add_argument("--episode_length", type=int, default=1000, help="Total episode length")
+    parser.add_argument("--step_length", type=int, default=200, help="Step length for each episode")
+    parser.add_argument("--actor_lr", type=float, default=1e-4, help="Learning rate for actor network")
+    parser.add_argument("--critic_lr", type=float, default=1e-4, help="Learning rate for critic network")
+    parser.add_argument("--buffer_size", type=int, default=10000, help="Size of the replay buffer")
+    parser.add_argument("--trajectory_length", type=int, default=200, help="Batch size for training")
+    parser.add_argument("--gamma", type=float, default=0.98, help="Discount factor for reward")
+    parser.add_argument("--Lambda", type=float, default=0.95, help="Lambda for PPO")
+    parser.add_argument("--epoch", type=int, default=25, help="Train epoch times for each trajectory")
+    parser.add_argument("--eps", type=float, default=0.2, help="clip")
+    arg = parser.parse_args()
+    print(arg)
+    return arg
 
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v0')  # render_mode="human"
-    n_states = env.observation_space.shape[0]  # 4
-    n_actions = env.action_space.n # 2
+    args = init_parameters()
+    env = gym.make(args.env_name)
+    states_dim = env.observation_space.shape[0]
+    actions_dim = env.action_space.n
+    agent = Agent(states_dim, actions_dim, args.trajectory_length, args.actor_lr, args.critic_lr, args.gamma, args.Lambda, args.epoch, args.eps)
 
-    agent = Agent(n_states, n_actions, MAX_TRAJECTORY_LENGTH, ACTOR_LR, CRITIC_LR, GAMMA, LAMBDA, EPOCH, EPS)
-    for i in range(MAX_EPISODE):
+    reward_list = []
+    for i in range(args.episode_length):
         state, info = env.reset()
         done = False
         reward_total = 0
         while not done:
             action = agent.get_action(state)
             next_state, reward, terminated, truncated, _ = env.step(action)
-            done = terminated | truncated
+            done = terminated or truncated
             agent.trajectory.add(state, action, next_state, reward, done)
             state = next_state
             reward_total += reward
 
-        reward_list.append(reward_total)
-
         agent.update()
         agent.trajectory.clear()
-        print(f"Episode：{i + 1}, Reward：{reward_total}")
 
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = current_path + '/models/'
-    torch.save(agent.actor.state_dict(), model_path + f"ppo_actor_model.pth")
-    agent.plot(agent.actor_loss, 'actor_epoch')
-    agent.plot(agent.critic_loss, 'critic_epoch')
+        reward_list.append(reward_total)
+        print(f"Episode：{i + 1}, Reward：{round(reward_total, 3)}")
 
-    plt.plot(range(len(reward_list)), reward_list, color='b')
-    plt.xlabel('episode')
-    plt.ylabel('reward')
-    plt.show()
+    # save model
+    save_model(os.path.dirname(os.path.realpath(__file__)), agent.actor.state_dict(), 'ppo_actor')
+    # plot reward curve
+    plot_reward(reward_list, 30)
