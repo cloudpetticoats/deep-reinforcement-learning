@@ -9,7 +9,7 @@ from common.tools import plot_reward, save_model
 """
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 |    Note: Noisy-DQN does not converge.                                        |
-|    There are issues with the current code, and it will be improved later.    |
+|    There are issues with Noisy-DQN code, and it will be improved later.      |
 |    Please do not use it for now.                                             |
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 """
@@ -22,14 +22,14 @@ def init_parameters():
     parser = argparse.ArgumentParser(description="DQN Hyperparameters")
     parser.add_argument("--env_name", type=str, default="CartPole-v1", help="Environment name")
     parser.add_argument("--episode_length", type=int, default=200, help="Total episode length")
-    parser.add_argument("--step_length", type=int, default=100, help="step length for each episode")
-    parser.add_argument("--epsilon_start", type=float, default=1, help="epsilon greedy explore epsilon_start")
-    parser.add_argument("--epsilon_end", type=float, default=0.02, help="epsilon greedy explore epsilon_end")
+    parser.add_argument("--step_length", type=int, default=100, help="Step length for each episode")
+    parser.add_argument("--epsilon_start", type=float, default=1, help="Epsilon greedy explore epsilon_start")
+    parser.add_argument("--epsilon_end", type=float, default=0.02, help="Epsilon greedy explore epsilon_end")
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate for q network")
     parser.add_argument("--buffer_size", type=int, default=10000, help="Size of the replay buffer")
     parser.add_argument("--batch_size", type=int, default=128, help="Batch size for training")
     parser.add_argument("--gamma", type=float, default=0.99, help="Discount factor for reward")
-    parser.add_argument("--interval", type=int, default=100, help="target q network update interval")
+    parser.add_argument("--interval", type=int, default=100, help="Target q network update interval")
     arg = parser.parse_args()
     print(arg)
     return arg
