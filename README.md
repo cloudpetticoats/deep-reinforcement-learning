@@ -62,7 +62,7 @@ We tested our code in the Gym, and some of the results are as follows.
         <strong>CartPole-v1(DQN)</strong>
       </div>
       <div>
-        <img src="./images/dqn-train.png" alt="Image 1" width="100%" height="100%">
+        <img src="./images/dqn_re.png" alt="Image 1" width="100%" height="100%">
       </div>
     </td>
     <td style="vertical-align: top;">
@@ -70,7 +70,7 @@ We tested our code in the Gym, and some of the results are as follows.
         <strong>CartPole-v1(Double-DQN)</strong>
       </div>
       <div>
-        <img src="./images/double-dqn.png" alt="Image 2" width="100%" height="100%">
+        <img src="./images/double_dqn_re.png" alt="Image 2" width="100%" height="100%">
       </div>
     </td>
     <td style="vertical-align: top;">
@@ -78,7 +78,7 @@ We tested our code in the Gym, and some of the results are as follows.
         <strong>CartPole-v1(Dueling-DQN)</strong>
       </div>
       <div>
-        <img src="./images/dueling-dqn-res.png" alt="Image 3" width="100%" height="100%">
+        <img src="./images/dueling_dqn_re.png" alt="Image 3" width="100%" height="100%">
       </div>
     </td>
   </tr>
@@ -88,7 +88,7 @@ We tested our code in the Gym, and some of the results are as follows.
         <strong>Pendulum-v1(DDPG)</strong>
       </div>
       <div>
-        <img src="./images/ddpg.png" alt="Image 4" width="100%" height="100%">
+        <img src="./images/ddpg_re.png" alt="Image 4" width="100%" height="100%">
       </div>
     </td>
     <td style="vertical-align: top;">
@@ -96,7 +96,7 @@ We tested our code in the Gym, and some of the results are as follows.
         <strong>CartPole-v0(PPO-Discrete)</strong>
       </div>
       <div>
-        <img src="./images/ppo_d.png" alt="Image 5" width="100%" height="100%">
+        <img src="./images/ppo_d_re.png" alt="Image 5" width="100%" height="100%">
       </div>
     </td>
     <td style="vertical-align: top;">
@@ -104,7 +104,17 @@ We tested our code in the Gym, and some of the results are as follows.
         <strong>Pendulum-v1(PPO-Continuous)</strong>
       </div>
       <div>
-        <img src="./images/ppo_c.png" alt="Image 6" width="100%" height="100%">
+        <img src="./images/ppo_c_re.png" alt="Image 6" width="100%" height="100%">
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="vertical-align: top;">
+      <div style="text-align: center;">
+        <strong>Pendulum-v1(SAC)</strong>
+      </div>
+      <div>
+        <img src="./images/sac.png" alt="Image 7" width="100%" height="100%">
       </div>
     </td>
   </tr>
