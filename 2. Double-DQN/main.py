@@ -1,38 +1,50 @@
 import os.path
 import random
-
 import gym
 import numpy as np
-import matplotlib.pyplot as plt
-import torch
-import time
+import argparse
 
 from agent import Agent
+from common.tools import plot_reward, save_model
 
-MAX_EPISODE = 300
-MAX_STEP = 100
-EPSILON_START = 1
-EPSILON_END = 0.02
 
-reward_list = []
+def init_parameters():
+    """
+    Initialize the parameters required for the algorithm.
+    """
+    parser = argparse.ArgumentParser(description="Double-DQN Hyperparameters")
+    parser.add_argument("--env_name", type=str, default="CartPole-v1", help="Environment name")
+    parser.add_argument("--episode_length", type=int, default=200, help="Total episode length")
+    parser.add_argument("--step_length", type=int, default=100, help="step length for each episode")
+    parser.add_argument("--epsilon_start", type=float, default=1, help="epsilon greedy explore epsilon_start")
+    parser.add_argument("--epsilon_end", type=float, default=0.02, help="epsilon greedy explore epsilon_end")
+    parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate for q network")
+    parser.add_argument("--buffer_size", type=int, default=10000, help="Size of the replay buffer")
+    parser.add_argument("--batch_size", type=int, default=128, help="Batch size for training")
+    parser.add_argument("--gamma", type=float, default=0.99, help="Discount factor for reward")
+    parser.add_argument("--interval", type=int, default=100, help="target q network update interval")
+    arg = parser.parse_args()
+    print(arg)
+    return arg
 
 
 if __name__ == '__main__':
-
-    env = gym.make('CartPole-v1')
+    args = init_parameters()
+    env = gym.make(args.env_name)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.n
 
-    agent = Agent(state_dim, action_dim)
+    agent = Agent(state_dim, action_dim, args.lr, args.buffer_size, args.batch_size, args.gamma, args.interval)
 
-    for episode_i in range(MAX_EPISODE):
+    reward_list = []
+    for episode_i in range(args.episode_length):
         state, info = env.reset()
         episode_reward = 0
 
-        for step_i in range(MAX_STEP):
+        for step_i in range(args.step_length):
             # epsilon greedy
-            epsilon = np.interp(x=episode_i*MAX_STEP+step_i, xp=[0, MAX_EPISODE*MAX_STEP/2],
-                                fp=[EPSILON_START, EPSILON_END])
+            epsilon = np.interp(x=episode_i*args.step_length+step_i, xp=[0, args.episode_length*args.step_length/2],
+                                fp=[args.epsilon_start, args.epsilon_end])
             random_sample = random.random()
             if random_sample <= epsilon:
                 action = env.action_space.sample()
@@ -40,26 +52,18 @@ if __name__ == '__main__':
                 action = agent.get_action(state)
 
             next_state, reward, terminated, truncated, info_ = env.step(action)
-
-            agent.memory.push(state, action, next_state, reward, terminated or truncated)
+            agent.memory.store_transition(state, action, next_state, reward, terminated or truncated)
+            agent.update()
 
             state = next_state
             episode_reward += reward
-
-            agent.update()
             if terminated or truncated:
                 break
 
         print(f"Episode: {episode_i+1}, Reward: {round(episode_reward, 3)}")
         reward_list.append(episode_reward)
 
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = current_path + '/models/'
-    timestamp = time.strftime("%Y%m%d%H%M%S")
-    torch.save(agent.q_net.state_dict(), model_path + f"dqn_q_net_{timestamp}.pth")
-    env.close()
-
-    plt.plot(range(len(reward_list)), reward_list, color='b')
-    plt.xlabel('episode')
-    plt.ylabel('reward')
-    plt.show()
+    # save model
+    save_model(os.path.dirname(os.path.realpath(__file__)), agent.q_net.state_dict(), 'double_dqn_q')
+    # plot reward curve
+    plot_reward(reward_list, 30)
