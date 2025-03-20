@@ -1,84 +1,73 @@
+import torch
 import random
 import numpy as np
-import torch
 import torch.nn as nn
-from collections import deque
 import torch.optim as optim
-import matplotlib.pyplot as plt
 
-
-# Hyperparameters
-LR_ACTOR = 1e-4
-LR_CRITIC = 1e-3
-GAMMA = 0.99
-MEMORY_SIZE = 100000
-BATCH_SIZE = 128
-TAU = 5e-3
+from collections import deque
 
 
 class Actor(nn.Module):
-    def __init__(self, state_num, action_num, hidden_num=64):
+    def __init__(self, state_dim, action_dim):
         super(Actor, self).__init__()
-        self.fc1 = nn.Linear(state_num, hidden_num)
-        self.fc2 = nn.Linear(hidden_num, hidden_num)
-        self.fc3 = nn.Linear(hidden_num, action_num)
+        self.f1 = nn.Linear(state_dim, 64)
+        self.f2 = nn.Linear(64, 64)
+        self.f3 = nn.Linear(64, action_dim)
 
     def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = torch.relu(self.fc2(x))
-        x = torch.tanh(self.fc3(x)) * 2
+        x = torch.relu(self.f1(x))
+        x = torch.relu(self.f2(x))
+        x = torch.tanh(self.f3(x)) * 2
         return x
 
 
 class Critic(nn.Module):
-    def __init__(self, state_num, action_num, hidden_num=64):
+    def __init__(self, state_dim, action_dim):
         super(Critic, self).__init__()
-        self.fc1 = nn.Linear(state_num+action_num, hidden_num)
-        self.fc2 = nn.Linear(hidden_num, hidden_num)
-        self.fc3 = nn.Linear(hidden_num, 1)
+        self.f1 = nn.Linear(state_dim + action_dim, 64)
+        self.f2 = nn.Linear(64, 64)
+        self.f3 = nn.Linear(64, 1)
 
     def forward(self, x, a):
         x = torch.cat([x, a], 1)
-        x = torch.relu(self.fc1(x))
-        x = torch.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = torch.relu(self.f1(x))
+        x = torch.relu(self.f2(x))
+        x = self.f3(x)
         return x
 
 
-class ReplayBuffer:
+class Memory:
     def __init__(self, capacity):
-        self.buffer = deque(maxlen=capacity)
-
-    def add_experience(self, state, action, reward, next_state, terminated):
-        # expand become [1, 3]
-        state = np.expand_dims(state, 0)
-        next_state = np.expand_dims(next_state, 0)
-        self.buffer.append((state, action, reward, next_state, terminated))
-
-    def sample(self, batch_size):
-        state, action, reward, next_state, terminated = zip(*random.sample(self.buffer, batch_size))
-        return np.concatenate(state), action, reward, np.concatenate(next_state), terminated
+        self.memory = deque([], maxlen=capacity)
 
     def __len__(self):
-        return len(self.buffer)
+        return len(self.memory)
+
+    def store_transition(self, state, action, next_state, reward, end):
+        self.memory.append((state, action, next_state, reward, end))
+
+    def sample(self, batch_size):
+        return random.sample(self.memory, batch_size)
 
 
 class Agent:
-    def __init__(self, state_num, action_num):
-        self.actor = Actor(state_num, action_num)
-        self.target_actor = Actor(state_num, action_num)
+    def __init__(self, state_dim, action_dim, actor_lr, critic_lr, buffer_size, batch_size, gamma, update_interval, tau):
+        self.actor = Actor(state_dim, action_dim)
+        self.target_actor = Actor(state_dim, action_dim)
         self.target_actor.load_state_dict(self.actor.state_dict())
-        self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=LR_ACTOR)
+        self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=actor_lr)
 
-        self.critic = Critic(state_num, action_num)
-        self.target_critic = Critic(state_num, action_num)
+        self.critic = Critic(state_dim, action_dim)
+        self.target_critic = Critic(state_dim, action_dim)
         self.target_critic.load_state_dict(self.critic.state_dict())
-        self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=LR_CRITIC)
+        self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=critic_lr)
 
-        self.replay_buffer = ReplayBuffer(BATCH_SIZE)
+        self.memory = Memory(buffer_size)
 
-        self.loss_actor = []
-        self.loss_critic = []
+        self.batch_size = batch_size
+        self.gamma = gamma
+        self.update_interval = update_interval
+        self.tau = tau
 
     def get_action(self, state):
         state = torch.FloatTensor(state).unsqueeze(0)
@@ -86,51 +75,36 @@ class Agent:
         return action.detach().cpu().numpy()[0]
 
     def update(self):
-        if len(self.replay_buffer) < BATCH_SIZE:
+        if len(self.memory) < self.batch_size:
             return
 
-        states, actions, rewards, next_states, terminateds = self.replay_buffer.sample(BATCH_SIZE)
-        states = torch.FloatTensor(states)
+        states, actions, next_states, rewards, ends = zip(*self.memory.sample(self.batch_size))
+        states = torch.FloatTensor(np.array(states))
         actions = torch.FloatTensor(np.vstack(actions))
+        next_states = torch.FloatTensor(np.array(next_states))
         rewards = torch.FloatTensor(rewards).unsqueeze(1)
-        next_states = torch.FloatTensor(next_states)
-        terminateds = torch.FloatTensor(terminateds).unsqueeze(1)
+        ends = torch.FloatTensor(ends).unsqueeze(1)
 
         # update critic network
         next_action = self.target_actor(next_states)
         target_Q = self.target_critic(next_states, next_action.detach())
-        target_Q = rewards + GAMMA * target_Q * (1 - terminateds)
+        target_Q = rewards + self.gamma * target_Q * (1 - ends)
         Q = self.critic(states, actions)
         critic_loss = nn.MSELoss()(Q, target_Q)
-        self.loss_critic.append(critic_loss.detach().numpy())
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
         self.critic_optimizer.step()
 
         # update actor network
         actor_loss = -self.critic(states, self.actor(states)).mean()
-        self.loss_actor.append(actor_loss.detach().numpy())
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
         self.actor_optimizer.step()
 
         # update target critic network
         for target_param, param in zip(self.target_critic.parameters(), self.critic.parameters()):
-            target_param.data.copy_(TAU * param.data + (1 - TAU) * target_param.data)
+            target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data)
 
         # update target actor network
         for target_param, param in zip(self.target_actor.parameters(), self.actor.parameters()):
-            target_param.data.copy_(TAU * param.data + (1 - TAU) * target_param.data)
-
-    def plot(self):
-        plt.plot(range(len(self.loss_actor)), self.loss_actor, color='b')
-        plt.title('loss actor network')
-        plt.xlabel('step')
-        plt.ylabel('loss')
-        plt.show()
-
-        plt.plot(range(len(self.loss_critic)), self.loss_critic, color='b')
-        plt.title('loss critic network')
-        plt.xlabel('step')
-        plt.ylabel('loss')
-        plt.show()
+            target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data)
