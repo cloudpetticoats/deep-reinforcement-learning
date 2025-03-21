@@ -1,9 +1,9 @@
 import random
-
 import numpy as np
 import torch.nn as nn
 import torch
 import torch.optim as optim
+import math
 
 from collections import deque
 
@@ -39,6 +39,7 @@ class NoisyLinear(nn.Module):
         self.output_dim = output_dim
 
         self.reset_epsilon()
+        self.reset_parameters()
 
     def forward(self, x):
         if self.mode == 'Train':
@@ -47,9 +48,20 @@ class NoisyLinear(nn.Module):
         else:
             return nn.functional.linear(x, self.weight_mu, self.bias_mu)
 
+    def reset_parameters(self):
+        # Initialize weight_mu to be uniformly distributed
+        mu_range = 1 / math.sqrt(self.input_dim)
+        self.weight_mu.data.uniform_(-mu_range, mu_range)
+        self.bias_mu.data.uniform_(-mu_range, mu_range)
+
+        # Initialization of sigma can be set to a constant 'sigma_0 / sqrt(input_dim)'
+        sigma_init = 0.017
+        self.weight_sigma.data.fill_(sigma_init)
+        self.bias_sigma.data.fill_(sigma_init)
+
     def reset_epsilon(self):
-        self.weight_epsilon = torch.rand(self.output_dim, self.input_dim)
-        self.bias_epsilon = torch.rand(self.output_dim)
+        self.weight_epsilon.copy_(torch.randn(self.output_dim, self.input_dim))
+        self.bias_epsilon.copy_(torch.randn(self.output_dim))
 
 
 class Memory:
@@ -71,7 +83,7 @@ class Agent:
         self.q_net = Q_net(state_dim, action_dim)
         self.target_q_net = Q_net(state_dim, action_dim)
         self.target_q_net.load_state_dict(self.q_net.state_dict())
-        self.q_net_optimizer = optim.AdamW(self.q_net.parameters(), lr=lr, amsgrad=True)
+        self.q_net_optimizer = optim.AdamW(self.q_net.parameters(), lr=lr)
         self.memory = Memory(buffer_size)
 
         self.batch_size = batch_size
@@ -80,12 +92,21 @@ class Agent:
         self.update_count = 0
 
     def get_action(self, state):
+        self.reset_noisy()
         with torch.no_grad():
             return self.q_net(torch.tensor(state)).max(0).indices.item()
+
+    def reset_noisy(self):
+        self.q_net.f1.reset_epsilon()
+        self.q_net.f2.reset_epsilon()
+        self.q_net.f3.reset_epsilon()
+        self.q_net.f4.reset_epsilon()
 
     def update(self):
         if len(self.memory) < self.batch_size:
             return
+
+        self.reset_noisy()
 
         states, actions, next_states, rewards, ends = zip(*self.memory.sample(self.batch_size))
         states = torch.FloatTensor(np.array(states))

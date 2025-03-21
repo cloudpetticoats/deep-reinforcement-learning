@@ -6,20 +6,11 @@ from agent import Agent
 from common.tools import plot_reward, save_model
 
 
-"""
-～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-|    Note: Noisy-DQN does not converge.                                        |
-|    There are issues with Noisy-DQN code, and it will be improved later.      |
-|    Please do not use it for now.                                             |
-～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-"""
-
-
 def init_parameters():
     """
     Initialize the parameters required for the algorithm.
     """
-    parser = argparse.ArgumentParser(description="DQN Hyperparameters")
+    parser = argparse.ArgumentParser(description="Noisy-DQN Hyperparameters")
     parser.add_argument("--env_name", type=str, default="CartPole-v1", help="Environment name")
     parser.add_argument("--episode_length", type=int, default=200, help="Total episode length")
     parser.add_argument("--step_length", type=int, default=100, help="Step length for each episode")
@@ -29,7 +20,7 @@ def init_parameters():
     parser.add_argument("--buffer_size", type=int, default=10000, help="Size of the replay buffer")
     parser.add_argument("--batch_size", type=int, default=128, help="Batch size for training")
     parser.add_argument("--gamma", type=float, default=0.99, help="Discount factor for reward")
-    parser.add_argument("--interval", type=int, default=100, help="Target q network update interval")
+    parser.add_argument("--interval", type=int, default=10, help="Target q network update interval")
     arg = parser.parse_args()
     print(arg)
     return arg
@@ -46,15 +37,6 @@ if __name__ == '__main__':
     for episode_i in range(args.episode_length):
         state, info = env.reset()
         episode_reward = 0
-
-        agent.q_net.f1.reset_epsilon()
-        agent.target_q_net.f1.reset_epsilon()
-        agent.q_net.f2.reset_epsilon()
-        agent.target_q_net.f2.reset_epsilon()
-        agent.q_net.f3.reset_epsilon()
-        agent.target_q_net.f3.reset_epsilon()
-        agent.q_net.f4.reset_epsilon()
-        agent.target_q_net.f4.reset_epsilon()
 
         for step_i in range(args.step_length):
             action = agent.get_action(state)
