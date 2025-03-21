@@ -22,11 +22,11 @@ def init_parameters():
     Initialize the parameters required for the algorithm.
     """
     parser = argparse.ArgumentParser(description="MA-DDPG Hyperparameters")
-    parser.add_argument("--episode_length", type=int, default=1000, help="Total episode length")
+    parser.add_argument("--episode_length", type=int, default=200, help="Total episode length")
     parser.add_argument("--step_length", type=int, default=25, help="Step length for each episode")
     parser.add_argument("--epsilon_start", type=float, default=1, help="Epsilon greedy explore epsilon_start")
     parser.add_argument("--epsilon_end", type=float, default=0.02, help="Epsilon greedy explore epsilon_end")
-    parser.add_argument("--actor_lr", type=float, default=1e-4, help="Learning rate for actor network")
+    parser.add_argument("--actor_lr", type=float, default=1e-3, help="Learning rate for actor network")
     parser.add_argument("--critic_lr", type=float, default=1e-4, help="Learning rate for critic network")
     parser.add_argument("--buffer_size", type=int, default=100000, help="Size of the replay buffer")
     parser.add_argument("--batch_size", type=int, default=128, help="Batch size for training")

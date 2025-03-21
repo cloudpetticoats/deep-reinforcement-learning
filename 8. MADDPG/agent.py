@@ -112,7 +112,7 @@ class MADDPG:
                 next_action_i = self.target_actors[i](temp_in).detach()
                 combi_next_action.append(next_action_i)
             combi_next_action_1_dim = torch.hstack(combi_next_action)
-            target_Q = self.target_critics[idx](combi_next_obs_1_dim, combi_next_action_1_dim)
+            target_Q = self.target_critics[idx](combi_next_obs_1_dim, combi_next_action_1_dim).detach()
             target_Q = rewards + self.gamma * target_Q * (1 - terminateds)
             Q = self.critics[idx](combi_obs_1_dim, combi_actions_1_dim)
             critic_loss = nn.MSELoss()(Q, target_Q)
