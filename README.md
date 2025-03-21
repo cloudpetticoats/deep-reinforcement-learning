@@ -5,18 +5,18 @@ If you have any questions about the code, feel free to submit an issue or contac
 
 ⚠️ <font color=#FF0000 >Important Note:</font>
 
-All algorithms in this repository, except for 4.Noisy-DQN and 8.MADDPG, have been thoroughly tested and can be used with confidence. 😍
+All algorithms in this repository, except for 8.MADDPG, have been thoroughly tested and can be used with confidence. 😍
 
-However, if you plan to use 4.Noisy-DQN or 8.MADDPG, please proceed with caution. 😐
+However, if you plan to use 8.MADDPG, please proceed with caution. 😐
 
 ### To do List
 - ✅ [DQN](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/1.%20DQN) – Implementation & Testing
 - ✅ [Double-DQN](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/2.%20Double-DQN) – Implementation & Testing
 - ✅ [Dueling-DQN](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/3.%20Dueling-DQN) – Implementation & Testing
+- ✅ [Noisy-DQN](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/4.%20Noisy-DQN) – Implementation & Testing
 - ✅ [DDPG](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/5.%20DDPG) – Implementation & Testing
 - ✅ [PPO-Discrete](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/6.%20PPO-Discrete) – Implementation & Testing
 - ✅ [PPO-Continuous](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/7.%20PPO-Continuous) – Implementation & Testing
-- 🔧 Noisy-DQN – Debugging
 - 🔧 MADDPG – Debugging
 - ✅ [SAC](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/9.%20SAC) – Implementation & Testing
 - 🚧 DSAC – Implementation in Progress
@@ -85,6 +85,14 @@ We tested our code in the Gym, and some of the results are as follows.
   <tr>
     <td style="vertical-align: top;">
       <div style="text-align: center;">
+        <strong>CartPole-v1(Noisy-DQN)</strong>
+      </div>
+      <div>
+        <img src="./images/noisy_dqn_re.png" alt="Image 7" width="100%" height="100%">
+      </div>
+    </td>
+    <td style="vertical-align: top;">
+      <div style="text-align: center;">
         <strong>Pendulum-v1(DDPG)</strong>
       </div>
       <div>
@@ -99,6 +107,8 @@ We tested our code in the Gym, and some of the results are as follows.
         <img src="./images/ppo_d_re.png" alt="Image 5" width="100%" height="100%">
       </div>
     </td>
+  </tr>
+  <tr>
     <td style="vertical-align: top;">
       <div style="text-align: center;">
         <strong>Pendulum-v1(PPO-Continuous)</strong>
@@ -106,9 +116,7 @@ We tested our code in the Gym, and some of the results are as follows.
       <div>
         <img src="./images/ppo_c_re.png" alt="Image 6" width="100%" height="100%">
       </div>
-    </td>
-  </tr>
-  <tr>
+    </td>    
     <td style="vertical-align: top;">
       <div style="text-align: center;">
         <strong>Pendulum-v1(SAC)</strong>
@@ -117,6 +125,7 @@ We tested our code in the Gym, and some of the results are as follows.
         <img src="./images/sac.png" alt="Image 7" width="100%" height="100%">
       </div>
     </td>
+
   </tr>
 </table>
 
