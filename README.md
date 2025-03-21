@@ -3,12 +3,6 @@ This repository provides **clean** and **robust** implementations of common **De
 
 If you have any questions about the code, feel free to submit an issue or contact me via _my email_ (available on [my homepage](https://github.com/cloudpetticoats)).
 
-⚠️ <font color=#FF0000 >Important Note:</font>
-
-All algorithms in this repository, except for 8.MADDPG, have been thoroughly tested and can be used with confidence. 😍
-
-However, if you plan to use 8.MADDPG, please proceed with caution. 😐
-
 ### To do List
 - ✅ [DQN](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/1.%20DQN) – Implementation & Testing
 - ✅ [Double-DQN](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/2.%20Double-DQN) – Implementation & Testing
@@ -17,9 +11,9 @@ However, if you plan to use 8.MADDPG, please proceed with caution. 😐
 - ✅ [DDPG](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/5.%20DDPG) – Implementation & Testing
 - ✅ [PPO-Discrete](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/6.%20PPO-Discrete) – Implementation & Testing
 - ✅ [PPO-Continuous](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/7.%20PPO-Continuous) – Implementation & Testing
-- 🔧 MADDPG – Debugging
 - ✅ [SAC](https://github.com/cloudpetticoats/deep-reinforcement-learning/tree/main/9.%20SAC) – Implementation & Testing
 - 🚧 DSAC – Implementation in Progress
+- 🚧 MADDPG – Implementation in Progress
 
 # _2.Usage_
 
