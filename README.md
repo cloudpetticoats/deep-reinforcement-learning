@@ -1,5 +1,5 @@
 # _1.Introduction_
-This repository provides implementations of common **Deep Reinforcement Learning** (DRL) algorithms.
+This repository provides **clean** and **robust** implementations of common **Deep Reinforcement Learning** (DRL) algorithms.
 
 If you have any questions about the code, feel free to submit an issue or contact me via _my email_ (available on [my homepage](https://github.com/cloudpetticoats)).
 
