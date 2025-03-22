@@ -1,4 +1,5 @@
 import random
+import numpy as np
 import torch.nn as nn
 import torch
 import torch.optim as optim
@@ -55,10 +56,10 @@ class Agent:
             return
 
         states, actions, next_states, rewards, ends = zip(*self.memory.sample(self.batch_size))
-        states = torch.FloatTensor(states)
+        states = torch.FloatTensor(np.array(states))
         actions = torch.tensor(actions).unsqueeze(1)
         rewards = torch.FloatTensor(rewards).unsqueeze(1)
-        next_states = torch.FloatTensor(next_states)
+        next_states = torch.FloatTensor(np.array(next_states))
         ends = torch.FloatTensor(ends).unsqueeze(1)
 
         # compute q value

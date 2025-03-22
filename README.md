@@ -46,7 +46,7 @@ If you want to train the model yourself. In each algorithm, run `main.py` to tra
 
 # _3.Performance_
 
-We tested our code in the Gym, and some of the results are as follows.
+We tested our code in the Gym, and the results are as follows.
 
 <table style="width:100%; text-align:center;">
   <tr>
