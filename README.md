@@ -34,7 +34,6 @@ Python 3.9
 PyTorch 2.6.0
 Gym 0.26.2
 Matplotlib 3.9.1
-PettingZoo 1.24.3
 ```
 
 ### 2.3 For Testing
