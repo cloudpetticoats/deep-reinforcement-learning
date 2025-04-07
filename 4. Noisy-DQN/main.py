@@ -12,13 +12,13 @@ def init_parameters():
     """
     parser = argparse.ArgumentParser(description="Noisy-DQN Hyperparameters")
     parser.add_argument("--env_name", type=str, default="CartPole-v1", help="Environment name")
-    parser.add_argument("--episode_length", type=int, default=200, help="Maximum number of steps per episode")
-    parser.add_argument("--step_length", type=int, default=100, help="Number of steps per training iteration")
+    parser.add_argument("--episode_length", type=int, default=200, help="Maximum episodes")
+    parser.add_argument("--step_length", type=int, default=100, help="Maximum steps per episode")
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate for training the Q-network")
     parser.add_argument("--buffer_size", type=int, default=10000, help="The size of replay buffer")
-    parser.add_argument("--batch_size", type=int, default=128, help="Number of experiences sampled from the buffer for training")
+    parser.add_argument("--batch_size", type=int, default=128, help="Batch size for training")
     parser.add_argument("--gamma", type=float, default=0.99, help="Discount factor for rewards")
-    parser.add_argument("--interval", type=int, default=10, help="Number of steps between target Q-network updates")
+    parser.add_argument("--interval", type=int, default=10, help="Training interval of the target Q-network")
     arg = parser.parse_args()
     print(arg)
     return arg
