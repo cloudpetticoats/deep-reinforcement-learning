@@ -38,11 +38,11 @@ Matplotlib 3.9.1
 
 ### 2.3 For Testing
 
-If you don't want to train the model yourself. In each algorithm, we have provided the trained model under `./models/` directory. You can run `test.py` directly for visualization testing.
+If you don't want to train the model yourself. In each algorithm, we have provided the trained model under `./models/` folder. You can run `test.py` directly for visualization testing.
 
 ### 2.4 For Training
 
-If you want to train the model yourself. In each algorithm, run `main.py` to train, save the trained model to the `./models/` directory, and then run `test.py` to perform visualization testing. 
+If you want to train the model yourself. In each algorithm, run `main.py` to train, save the trained model to the `./models/` folder, and then run `test.py` to perform visualization testing. 
 
 # _3.Performance_
 
@@ -123,14 +123,23 @@ We tested our code in the Gym, and the results are as follows.
 </table>
 
 # _4.Reference_
-### 4.1 Excellent Weblog
+### 4.1 Related Paper
+- DQN: [Mnih, V., Kavukcuoglu, K., Silver, D. et al. Human-level control through deep reinforcement learning. Nature 518, 529–533 (2015).](https://www.nature.com/articles/nature14236?source=post_page)
+- Double DQN: [van Hasselt, H., Guez, A. and Silver, D. Deep Reinforcement Learning with Double Q-Learning. Proceedings of the AAAI Conference on Artificial Intelligence. 30, 1 (Mar. 2016).](https://ojs.aaai.org/index.php/AAAI/article/view/10295)
+- Dueling DQN: [Ziyu Wang, Tom Schaul, Matteo Hessel, Hado Van Hasselt, Marc Lanctot, and Nando De Freitas. Dueling network architectures for deep reinforcement learning. In Proceedings of the 33rd International Conference on International Conference on Machine Learning - Volume 48 (ICML).](https://dl.acm.org/doi/10.5555/3045390.3045601)
+- Noisy DQN: [Fortunato M, Azar M G, Piot B, et al. Noisy networks for exploration. arXiv preprint arXiv:1706.10295, 2017.](https://arxiv.org/abs/1706.10295)
+- DDPG: [Lillicrap T P, Hunt J J, Pritzel A, et al. Continuous control with deep reinforcement learning. arXiv preprint arXiv:1509.02971, 2015.](https://arxiv.org/abs/1509.02971)
+- PPO: [Schulman J, Wolski F, Dhariwal P, et al. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347, 2017.](https://arxiv.org/abs/1707.06347)
+- SAC: [Haarnoja T, Zhou A, Abbeel P, et al. Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor. arXiv preprint arXiv:1801.01290, 2018.](https://arxiv.org/abs/1801.01290)
+- DSAC-T: [J. Duan et al., "Distributional Soft Actor-Critic With Three Refinements," IEEE Transactions on Pattern Analysis and Machine Intelligence, doi: 10.1109/TPAMI.2025.3537087](https://ieeexplore.ieee.org/abstract/document/10858686)
+### 4.2 Excellent Weblog
 - [How to choose a deep reinforcement learning algorithm? (MuZero, SAC, PPO, TD3, DDPG, DQN, etc.)](https://zhuanlan.zhihu.com/p/342919579)
 - [Hyperparameter Tuning Techniques in Deep Reinforcement Learning: Examples from D3QN, TD3, PPO, and SAC Algorithms](https://zhuanlan.zhihu.com/p/345353294)
 - [PPO implementation tricks](https://zhuanlan.zhihu.com/p/512327050)
-### 4.2 Excellent Web
+### 4.3 Excellent Web
 - [Deep Reinforcement Learning Laboratory](https://www.deeprlhub.com/)
 - [Mushroom Book](https://datawhalechina.github.io/easy-rl/#/)
 - [hujian@gitbook](https://hujian.gitbook.io/deep-reinforcement-learning)
-### 4.3 Excellent Course
+### 4.4 Excellent Course
 - [Professor Hung-yi Lee's Deep Reinforcement Learning Online Course](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
 
