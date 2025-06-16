@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://github.com/cloudpetticoats/deep-reinforcement-learning/images/icon.png" width=500 />
+<img src="https://github.com/cloudpetticoats/deep-reinforcement-learning/blob/main/images/icon.png" width=500 />
 </div>
 
 <div align=center>
