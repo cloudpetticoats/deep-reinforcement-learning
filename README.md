@@ -3,7 +3,7 @@
 </div>
 
 <div align=center>
-Minimal abstraction, Beginner-friendly
+🤩 Minimal abstraction, Beginner-friendly 😘
 </div>
 
 <div align=center>
