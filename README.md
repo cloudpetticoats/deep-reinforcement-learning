@@ -1,3 +1,17 @@
+<div align=center>
+<img src="https://github.com/cloudpetticoats/deep-reinforcement-learning/images/icon.png" width=500 />
+</div>
+
+<div align=center>
+Minimal abstraction, Beginner-friendly
+</div>
+
+<div align=center>
+  <img src="https://img.shields.io/badge/Python-blue" />
+  <img src="https://img.shields.io/badge/DRL-blueviolet" />
+  <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/Pytorch-ff69b4" /></a>
+</div>
+
 # _1.Introduction_
 This repository provides **clean** and **robust** implementations of common **Deep Reinforcement Learning** (DRL) algorithms.
 
