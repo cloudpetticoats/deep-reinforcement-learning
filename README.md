@@ -157,3 +157,5 @@ We tested our code in the Gym, and the results are as follows.
 ### 4.4 Excellent Course
 - [Professor Hung-yi Lee's Deep Reinforcement Learning Online Course](https://www.youtube.com/watch?v=z95ZYgPgXOY&list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_&index=1)
 
+# ⭐️ _Star History_
+[![Star History Chart](https://api.star-history.com/svg?repos=cloudpetticoats/deep-reinforcement-learning&type=Date)](https://star-history.com/#cloudpetticoats/deep-reinforcement-learning&Date)
