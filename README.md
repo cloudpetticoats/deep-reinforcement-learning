@@ -34,6 +34,8 @@ If you have any questions about the code, feel free to submit an issue or contac
 It is super easy to use our DRL algorithms. If you just want to test the performance, please see [2.3](#23-for-testing). If you want to train the model yourself, please see [2.4](#24-for-training).
 
 ### 2.1 Download Repo Code
+
+Run the following command in your terminal to download this repository to your local.
 ```
 git clone https://github.com/cloudpetticoats/deep-reinforcement-learning.git
 ```
@@ -52,11 +54,11 @@ Matplotlib 3.9.1
 
 ### 2.3 For Testing
 
-If you don't want to train the model yourself. In each algorithm, we have provided the trained model under `./models/` folder. You can run `test.py` directly for visualization testing.
+If you don't want to train the model yourself, we have already provided the trained models in the `./models/` folder of each algorithm. You can run `test.py` directly for visualization testing.
 
 ### 2.4 For Training
 
-If you want to train the model yourself. In each algorithm, run `main.py` to train, save the trained model to the `./models/` folder, and then run `test.py` to perform visualization testing. 
+If you want to train the model yourself, go to each algorithm folder and run `main.py` to train. The trained model will be saved in the `./models/` folder. Then, run `test.py` to perform visualization testing.
 
 # _3.Performance_
 
