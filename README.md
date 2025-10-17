@@ -147,7 +147,7 @@ We tested our code in the Gym, and the results are as follows.
 - DDPG: [Lillicrap T P, Hunt J J, Pritzel A, et al. Continuous control with deep reinforcement learning. arXiv preprint arXiv:1509.02971, 2015.](https://arxiv.org/abs/1509.02971)
 - PPO: [Schulman J, Wolski F, Dhariwal P, et al. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347, 2017.](https://arxiv.org/abs/1707.06347)
 - SAC: [Haarnoja T, Zhou A, Abbeel P, et al. Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor. arXiv preprint arXiv:1801.01290, 2018.](https://arxiv.org/abs/1801.01290)
-- DSAC-T: [J. Duan et al., "Distributional Soft Actor-Critic With Three Refinements," IEEE Transactions on Pattern Analysis and Machine Intelligence, doi: 10.1109/TPAMI.2025.3537087](https://ieeexplore.ieee.org/abstract/document/10858686)
+- DSAC-T: [J. Duan et al., "Distributional Soft Actor-Critic With Three Refinements," IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 47, no. 5, pp. 3935-3946, May 2025, doi: 10.1109/TPAMI.2025.3537087.](https://ieeexplore.ieee.org/abstract/document/10858686)
 ### 4.2 Excellent Weblog
 - [How to choose a deep reinforcement learning algorithm? (MuZero, SAC, PPO, TD3, DDPG, DQN, etc.)](https://zhuanlan.zhihu.com/p/342919579)
 - [Hyperparameter Tuning Techniques in Deep Reinforcement Learning: Examples from D3QN, TD3, PPO, and SAC Algorithms](https://zhuanlan.zhihu.com/p/345353294)
